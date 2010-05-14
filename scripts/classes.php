@@ -105,7 +105,7 @@ class ShowRelationshipsModifier extends Modifier {
     
     $result = '<ul class="relations">';
     while (mysqli_stmt_fetch($stmt)) {
-      $result .= "<li>$responder referred to $target<!-- on $last_reply_time --></li>";
+      $result .= "<li><a href=\"http://$responder.theintor.net\">$responder</a> referred to <a href=\"http://$target.theintor.net\">$target</a><!-- on $last_reply_time --></li>";
     }
     $result .= "</ul>";
 
