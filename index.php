@@ -3,6 +3,8 @@ ini_set('display_errors', 'On');
 include( 'scripts/funcs.php' );
 include( 'scripts/classes.php' );
 $server_name = explode('.',$_SERVER['SERVER_NAME']);
+$subdomain = str_replace('---','<br/>',$server_name[0]);
+$subdomain = str_replace('--','&ndash;',$server_name[0]);
 $subdomain = str_replace('-',' ',$server_name[0]);
 $ma = new ModifierApplicator($subdomain, $registered_modifiers, $_SERVER['REQUEST_URI']);
 $db = get_db();
