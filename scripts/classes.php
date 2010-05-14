@@ -117,7 +117,8 @@ class ShowRelationshipsModifier extends Modifier {
 }
 
 class GraphVizModifier extends Modifier {
-  protected $ereg = "/^gv$/";
+  protected $ereg = "/^g$/";
+  protected $help_text = "Renders a graph of relationships";
   public function getClosingTags() {
     return '<img src="http://'.$_SERVER['SERVER_NAME'].'/gv.php" alt="graph viz" class="graphviz_image" />';
   }
