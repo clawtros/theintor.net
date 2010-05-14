@@ -32,8 +32,8 @@ abstract class Modifier {
 
 class EmboldeningModifier extends Modifier {
   protected $ereg = "/^b$/";
-  protected $opening_tag = "<b>";
-  protected $closing_tag = "</b>";
+  protected $opening_tag = "<strong>";
+  protected $closing_tag = "</strong>";
 }
 
 class OmgWhyModifier extends Modifier {
@@ -50,6 +50,14 @@ class MarqueeModifier extends Modifier {
 
   protected $opening_tag = "<marquee>";
   protected $closing_tag = "</marquee>";
+
+}
+
+
+class NoMarginModifier extends Modifier {
+  protected $ereg = "/^nm$/";
+
+  protected $css_additions = ".phrase { margin-top:0px; } ";
 
 }
 
@@ -81,7 +89,7 @@ class EmphasisModifier extends Modifier {
 
 class OlTimeyModifier extends Modifier {
   protected $ereg = "/^oltimey$/";
-  protected $css_additions = "body { background-color: #000; color: #fff; border: 3px double #fff; height: 98%; } .phrase { margin-bottom: 20% }";
+  protected $css_additions = "body { background-color: #000; color: #fff; border: 3px double #fff; height: 95%; } .phrase { margin-bottom: 20% }";
 }
 
 class CodifyModifier extends Modifier {
@@ -143,6 +151,7 @@ class ModifierApplicator {
 $registered_modifiers = array('EmboldeningModifier',
                               'EmphasisModifier',
                               'UppercaseModifier',
+                              'NoMarginModifier',
                               'SizeModifier',
                               'MarqueeModifier',
                               'CodifyModifier',

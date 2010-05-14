@@ -7,8 +7,4 @@ html, body { height: 100% }
 }
 
 body { font-family: Futura, Century Gothic, Helvetica, Arial, Sans }
-.phrase { font-size:48px; text-align:center; margin-top:20%; }
-/*
-
-
-*/
+.phrase { font-weight: normal; font-size:48px; text-align:center; margin-top:20%; }
