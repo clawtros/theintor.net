@@ -1,0 +1,5 @@
+[db]
+username=root
+password=
+schema=theintornet
+host=127.0.0.1
