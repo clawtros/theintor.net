@@ -3,7 +3,7 @@
 function randcolor() {
   $result = "";
   foreach (range(1,3) as $i) {
-    $result .= base_convert(rand(1,255),10,16);
+    $result .= base_convert(rand(17,255),10,16);
   }
   return $result;
 }
