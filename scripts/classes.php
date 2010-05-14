@@ -36,10 +36,21 @@ class EmboldeningModifier extends Modifier {
   protected $closing_tag = "</b>";
 }
 
-class EmbiggeningModifier extends Modifier {
-  protected $ereg = "/^s_$/";
-  protected $opening_tag = "<em>";
-  protected $closing_tag = "</em>";
+class OmgWhyModifier extends Modifier {
+  protected $ereg = "/^fffuuuu$/";
+
+  protected $opening_tag = "<blink>";
+  protected $closing_tag = "</blink>";
+
+}
+
+
+class MarqueeModifier extends Modifier {
+  protected $ereg = "/^mq$/";
+
+  protected $opening_tag = "<marquee>";
+  protected $closing_tag = "</marquee>";
+
 }
 
 
@@ -89,7 +100,9 @@ class BinaryModifier extends Modifier {
   public function getModifiedText($subdomain) {
     $result = "";
     for ($i = 0; $i < strlen($subdomain); $i++) {
-      $result .= sprintf("%d ", decbin(ord($subdomain[$i])));
+      $result .= sprintf("%d %s", 
+                         decbin(ord($subdomain[$i])), 
+                         $subdomain[$i] == " " ? "<br/>" : "");
     }
     return $result;
   }
@@ -128,12 +141,13 @@ class ModifierApplicator {
 }
 
 $registered_modifiers = array('EmboldeningModifier',
-                              'EmbiggeningModifier',
                               'EmphasisModifier',
                               'UppercaseModifier',
                               'SizeModifier',
+                              'MarqueeModifier',
                               'CodifyModifier',
                               'BinaryModifier',
+                              'OmgWhyModifier',
                               'OlTimeyModifier');
 
 

@@ -12,15 +12,15 @@ hit_subdomain($db, $subdomain);
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="theintornet.css" />
     <title><?php echo $subdomain ?></title>
-      
     <style type="text/css">
-      body { font-family: Franklin Gothic, Futura, Helvetica, Arial, Sans}
-      .phrase { margin-top:20%; font-size:48px; text-align:center }
 <?php echo $ma->css_additions; ?>
     </style>
   </head>
   <body>
-    <h1 class="phrase"><?php echo $ma->getModifiedSubdomain(); ?></h1>
+    <div id="where_things_go">
+      <h1 class="phrase"><?php echo $ma->getModifiedSubdomain(); ?></h1>
+    </div>
   </body>
 </html>
