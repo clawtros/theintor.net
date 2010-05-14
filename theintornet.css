@@ -6,5 +6,16 @@ html, body { height: 100% }
     width: 100%;
 }
 
+#about_content table {
+    width:100%;
+}
+#about_content table tr.alt {
+    background-color: #dadada;
+}
+th {text-align:left; border-bottom: 1px solid #555}
 body { font-family: Futura, Century Gothic, Helvetica, Arial, Sans }
 .phrase { font-weight: normal; font-size:48px; text-align:center; margin-top:20%; }
+#about_content {
+    width:960px;
+    margin:auto;
+}

@@ -6,9 +6,21 @@ abstract class Modifier {
   protected $opening_tag = "";
   protected $closing_tag = "";
   protected $css_additions = "";
+  protected $help_text = "None yet";
 
   public function Modifier($fragment) {
     $this->fragment = $fragment;
+  }
+  public function getRegexp() {
+    $translations = array('/' => '',
+                          '\d+' => ' followed by numbers',
+                          '^' => '',
+                          '$' => '');
+                          
+    return str_replace(array_keys($translations), array_values($translations), $this->ereg);
+  }
+  public function getHelpText() {
+    return $this->help_text;
   }
   public function getOpeningTags() {
     return $this->opening_tag;
@@ -38,7 +50,6 @@ class EmboldeningModifier extends Modifier {
 
 class OmgWhyModifier extends Modifier {
   protected $ereg = "/^fffuuuu$/";
-
   protected $opening_tag = "<blink>";
   protected $closing_tag = "</blink>";
 
@@ -146,6 +157,29 @@ class ModifierApplicator {
     return $this->opening_tags.$this->subdomain.$this->closing_tags;
   }
 
+}
+
+class HelpGenerator {
+  private $registered_modifiers;
+  public function HelpGenerator($modifier_candidates) {
+    foreach ($modifier_candidates as $modifier) {
+      $this->registered_modifiers[$modifier] = new $modifier("");
+    }
+  }
+  
+  public function getAllHelp() {
+    $results = array();
+
+    foreach ($this->registered_modifiers as $modifier_name => $modifier) {
+      $result = new stdClass();
+      $result->name = str_replace("Modifier", "", $modifier_name);
+      $result->matches = $modifier->getRegexp();
+      $result->description = $modifier->getHelpText();
+      array_push($results, $result);
+    }
+
+    return $results;
+  }
 }
 
 $registered_modifiers = array('EmboldeningModifier',
