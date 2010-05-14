@@ -1,5 +1,7 @@
 [db]
-username=root
+user=root
 password=
 schema=theintornet
 host=127.0.0.1
+[other]
+graphviz_location=/opt/local/bin/dot
