@@ -3,6 +3,7 @@ ini_set('display_errors', 'On');
 include( 'scripts/funcs.php' );
 include( 'scripts/classes.php' );
 $server_name = explode('.',$_SERVER['SERVER_NAME']);
+$title = str_replace('-',' ',$server_name[0]);
 $subdomain = str_replace('---','<br/>',$server_name[0]);
 $subdomain = str_replace('--','&#8211;', $subdomain);
 $subdomain = str_replace('-',' ',$subdomain);
@@ -15,7 +16,7 @@ hit_subdomain($db, $subdomain);
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="/theintornet.css" />
-    <title><?php echo $subdomain ?></title>
+    <title><?php echo $title ?></title>
     <style type="text/css">
       <?php echo $ma->css_additions; ?>
     </style>
