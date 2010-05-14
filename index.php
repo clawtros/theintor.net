@@ -25,4 +25,5 @@ hit_subdomain($db, $subdomain);
       <h1 class="phrase"><?php echo $ma->getModifiedSubdomain(); ?></h1>
     </div>
   </body>
+  <!-- an Adam Benzan internet concern -->
 </html>
