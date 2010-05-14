@@ -22,7 +22,7 @@ abstract class Modifier {
 
   public function getSample() {
     $translations = array('/' => '',
-                          '\d+' => rand(1,255),
+                          '\d+' => rand(1,80),
                           '^' => '',
                           '$' => '');
                           
@@ -67,7 +67,6 @@ class OmgWhyModifier extends Modifier {
 
 }
 
-
 class MarqueeModifier extends Modifier {
   protected $ereg = "/^mq$/";
   protected $help_text = "Scrolling scrolling scrolling";
@@ -105,6 +104,34 @@ class SizeModifier extends Modifier {
     return sprintf( ".phrase { font-size: %dpx }", $parameters[0] );
   }
 }
+
+class GlowModifier extends Modifier {
+  protected $ereg = "/^g\d+$/";
+  protected $opening_tag = '';
+  protected $help_text = "Applies a glow effect with specific radius";
+  public function getParameters() {
+    return array(substr($this->fragment, 1));
+  }
+
+  public function getCssAdditions() {
+    $parameters = $this->getParameters();
+    return sprintf( ".phrase { text-shadow: #ff5 0px 0px %dpx }", $parameters[0] );
+  }
+}
+
+
+class ShadowModifier extends Modifier {
+  protected $ereg = "/^sh$/";
+  protected $opening_tag = '';
+  protected $help_text = "Applies a drop shadow";
+
+  public function getCssAdditions() {
+    //$parameters = $this->getParameters();
+    //return sprintf( ".phrase { text-shadow: #ccc 10px 10px 0px }", $parameters[0] );
+    return ".phrase { text-shadow: #ccc 10px 10px 10px }";
+  }
+}
+
 
 class EmphasisModifier extends Modifier {
   protected $ereg = "/^i$/";
@@ -188,7 +215,7 @@ class HelpGenerator {
   
   public function getAllHelp() {
     $results = array();
-
+    ksort($this->registered_modifiers);
     foreach ($this->registered_modifiers as $modifier_name => $modifier) {
       $result = new stdClass();
       $result->name = str_replace("Modifier", "", $modifier_name);
@@ -209,6 +236,8 @@ $registered_modifiers = array('EmboldeningModifier',
                               'SizeModifier',
                               'MarqueeModifier',
                               'CodifyModifier',
+                              'GlowModifier',
+                              'ShadowModifier',
                               'BinaryModifier',
                               'OmgWhyModifier',
                               'OlTimeyModifier');

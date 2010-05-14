@@ -17,6 +17,7 @@ $help = new HelpGenerator($registered_modifiers);
       <p>
         These modifiers are applied to the URLs by following the domain with any number of these thiengs, separated with slashes.  So if we wanted a message of size 150 that was both uppercased and bolded, the url would be:<br/> <a href="http://sample-message.theintor.net/b/uc/s150">http://sample-message.theintor.net/b/uc/s150</a>.
       </p>
+      <p>
       <table>
         <thead>
           <th style="width:150px">Name</th>
