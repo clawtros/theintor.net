@@ -20,7 +20,7 @@ $help = new HelpGenerator($registered_modifiers);
       <table>
         <thead>
           <th style="width:150px">Name</th>
-          <th style="width:250px">Matches</th>
+          <th style="width:200px">Matches</th>
           <th>Description</th>
           <th style="width:300px;">Sample</th>
         </thead>
