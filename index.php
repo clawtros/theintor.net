@@ -15,7 +15,7 @@ hit_subdomain($db, $subdomain);
     <link rel="stylesheet" type="text/css" href="/theintornet.css" />
     <title><?php echo $subdomain ?></title>
     <style type="text/css">
-<?php echo $ma->css_additions; ?>
+      <?php echo $ma->css_additions; ?>
     </style>
   </head>
   <body>

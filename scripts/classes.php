@@ -81,7 +81,7 @@ class EmphasisModifier extends Modifier {
 
 class OlTimeyModifier extends Modifier {
   protected $ereg = "/^oltimey$/";
-  protected $css_additions = "body { background-color: #000; color: #fff; border: 3px double #fff; height: 100%; } .phrase { margin-bottom: 20%}";
+  protected $css_additions = "body { background-color: #000; color: #fff; border: 3px double #fff; height: 98%; } .phrase { margin-bottom: 20% }";
 }
 
 class CodifyModifier extends Modifier {
