@@ -116,6 +116,13 @@ class ShowRelationshipsModifier extends Modifier {
   }
 }
 
+class GraphVizModifier extends Modifier {
+  protected $ereg = "/^gv$/";
+  public function getClosingTags() {
+    return '<img src="http://'.$_SERVER['SERVER_NAME'].'/gv.php" alt="graph viz" class="graphviz_image" />';
+  }
+}
+
 class RespondsToModifier extends Modifier {
   protected $ereg = "/^@.*$/";
   protected $help_text = "Associates this URL with another URL, the characters specified are exactly what comes before .theintor.net";
@@ -335,6 +342,7 @@ class HelpGenerator {
 
 $registered_modifiers = array('UnboldeningModifier',
                               'EmphasisModifier',
+                              'GraphVizModifier',
                               'UppercaseModifier',
                               'NoMarginModifier',
                               'BGModifier',
