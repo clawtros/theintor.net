@@ -55,7 +55,7 @@ function get_relationships($name=null, $depth=1, $max_depth=5) {
   return $results;
 }
 
-if ($subdomain != "theintor" && false) {
+if ($subdomain != "theintor") {
   $current_subdomain = $subdomain;
   $results = get_relationships($current_subdomain);
 } else {
