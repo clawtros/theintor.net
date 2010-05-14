@@ -91,7 +91,7 @@ class MarqueeModifier extends Modifier {
 
 class RespondsToModifier extends Modifier {
   protected $ereg = "/^@.*$/";
-
+  protected $help_text = "Associates this URL with another URL, the characters specified are exactly what comes before .theintor.net";
   public function getParameters() {
     return array(substr($this->fragment, 1));
   }
