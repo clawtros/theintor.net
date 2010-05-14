@@ -73,6 +73,28 @@ class OlTimeyModifier extends Modifier {
   protected $css_additions = "body { background-color: #000; color: #fff; border: 3px double #fff; height: 100%; } .phrase { margin-bottom: 20%}";
 }
 
+class CodifyModifier extends Modifier {
+  protected $ereg = "/^ascii$/";
+  public function getModifiedText($subdomain) {
+    $result = "";
+    for ($i = 0; $i < strlen($subdomain); $i++) {
+      $result .= sprintf("%d ", ord($subdomain[$i]));
+    }
+    return $result;
+  }
+}
+
+class BinaryModifier extends Modifier {
+  protected $ereg = "/^1101$/";
+  public function getModifiedText($subdomain) {
+    $result = "";
+    for ($i = 0; $i < strlen($subdomain); $i++) {
+      $result .= sprintf("%d ", decbin(ord($subdomain[$i])));
+    }
+    return $result;
+  }
+}
+
 class ModifierApplicator {
   private $valid_modifiers = array();
   public $css_additions = "";
@@ -110,6 +132,8 @@ $registered_modifiers = array('EmboldeningModifier',
                               'EmphasisModifier',
                               'UppercaseModifier',
                               'SizeModifier',
+                              'CodifyModifier',
+                              'BinaryModifier',
                               'OlTimeyModifier');
 
 
