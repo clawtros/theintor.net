@@ -258,7 +258,7 @@ class BinaryModifier extends Modifier {
     for ($i = 0; $i < strlen($text); $i++) {
       $result .= sprintf("%d %s", 
                          decbin(ord($text[$i])), 
-                         $subdomain[$i] == " " ? "<br/>" : "");
+                         $text[$i] == " " ? "<br/>" : "");
     }
     return $result;
   }
