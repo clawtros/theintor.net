@@ -9,6 +9,7 @@ function randcolor() {
 }
 
 abstract class Modifier {
+  protected $subdomain;
   protected $fragment;
   protected $ereg = "";
   protected $opening_tag = "";
@@ -16,11 +17,12 @@ abstract class Modifier {
   protected $css_additions = "";
   protected $help_text = "None yet";
 
-  public function Modifier($fragment) {
+  public function Modifier($fragment, $subdomain) {
     $this->fragment = $fragment;
+    $this->subdomain = $subdomain;
   }
 
-  public function modifyDb($db, $subdomain) { }
+  public function modifyDb($db) { }
 
   public function getRegexp() {
     $translations = array('/' => '',
@@ -78,7 +80,6 @@ class OmgWhyModifier extends Modifier {
   protected $help_text = "Really irritate viewer";
   protected $opening_tag = "<blink>";
   protected $closing_tag = "</blink>";
-
 }
 
 class MarqueeModifier extends Modifier {
@@ -89,6 +90,32 @@ class MarqueeModifier extends Modifier {
 
 }
 
+class ShowRelationshipsModifier extends Modifier {
+  protected $ereg = "/^r$/";
+  protected $help_text = "Show relationships to other URLs";
+
+  public function getClosingTags() {
+    $result = "";
+    $db = get_db();
+    $stmt = mysqli_prepare($db, "SELECT responder, target, last_reply_time FROM response_lookup WHERE responder = ? OR target = ?");
+    mysqli_stmt_bind_param($stmt, 'ss', $this->subdomain, $this->subdomain);
+
+    mysqli_stmt_bind_result($stmt, $responder, $target, $last_reply_time);
+    mysqli_stmt_execute($stmt);
+    
+    $result = '<ul class="relations">';
+    while (mysqli_stmt_fetch($stmt)) {
+      $result .= "<li>$responder referred to $target<!-- on $last_reply_time --></li>";
+    }
+    $result .= "</ul>";
+
+    mysqli_stmt_free_result($stmt);
+    mysqli_stmt_close($stmt);  
+
+    return $result;
+  }
+}
+
 class RespondsToModifier extends Modifier {
   protected $ereg = "/^@.*$/";
   protected $help_text = "Associates this URL with another URL, the characters specified are exactly what comes before .theintor.net";
@@ -96,12 +123,13 @@ class RespondsToModifier extends Modifier {
     return array(substr($this->fragment, 1));
   }
 
-  public function modifyDb($db, $subdomain) {
+  public function modifyDb() {
+    $db = get_db();
     $params = $this->getParameters();
     $target = $params[0];
 
     $stmt = mysqli_prepare($db, "REPLACE INTO response_lookup (responder, target, last_reply_time) VALUES (?, ?, NOW())");
-    mysqli_stmt_bind_param($stmt, 'ss', $subdomain, $target);
+    mysqli_stmt_bind_param($stmt, 'ss', $this->subdomain, $target);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_free_result($stmt);
     mysqli_stmt_close($stmt);  
@@ -118,8 +146,8 @@ class NoMarginModifier extends Modifier {
 class UppercaseModifier extends Modifier {
   protected $ereg = "/^uc$/";
   protected $help_text = "Converts to UPPERCASE";
-  public function getModifiedText($subdomain) {
-    return strtoupper($subdomain);
+  public function getModifiedText($text) {
+    return strtoupper($text);
   }
 }
 
@@ -212,10 +240,10 @@ class SerifModifier extends Modifier {
 class CodifyModifier extends Modifier {
   protected $ereg = "/^ascii$/";
   protected $help_text = "Converts text to ascii representation";
-  public function getModifiedText($subdomain) {
+  public function getModifiedText($text) {
     $result = "";
-    for ($i = 0; $i < strlen($subdomain); $i++) {
-      $result .= sprintf("%d ", ord($subdomain[$i]));
+    for ($i = 0; $i < strlen($text); $i++) {
+      $result .= sprintf("%d ", ord($text[$i]));
     }
     return $result;
   }
@@ -225,11 +253,11 @@ class BinaryModifier extends Modifier {
   protected $ereg = "/^1101$/";
   protected $help_text = "Converts text to binary representation of ascii values";
   
-  public function getModifiedText($subdomain) {
+  public function getModifiedText($text) {
     $result = "";
-    for ($i = 0; $i < strlen($subdomain); $i++) {
+    for ($i = 0; $i < strlen($text); $i++) {
       $result .= sprintf("%d %s", 
-                         decbin(ord($subdomain[$i])), 
+                         decbin(ord($text[$i])), 
                          $subdomain[$i] == " " ? "<br/>" : "");
     }
     return $result;
@@ -261,7 +289,7 @@ class ModifierApplicator {
 
     foreach ($params as $param) {
       foreach ($modifier_candidates as $modifier) {
-        $test_modifier = new $modifier($param);
+        $test_modifier = new $modifier($param, $this->raw_subdomain);
 
         if ($test_modifier->isValid()) {
           $this->css_additions .= $test_modifier->getCssAdditions();
@@ -285,7 +313,7 @@ class HelpGenerator {
   private $registered_modifiers;
   public function HelpGenerator($modifier_candidates) {
     foreach ($modifier_candidates as $modifier) {
-      $this->registered_modifiers[$modifier] = new $modifier("");
+      $this->registered_modifiers[$modifier] = new $modifier("","sample-domain");
     }
   }
   
@@ -310,6 +338,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'UppercaseModifier',
                               'NoMarginModifier',
                               'BGModifier',
+                              'ShowRelationshipsModifier',
                               'FGModifier',
                               'SizeModifier',
                               'MarqueeModifier',

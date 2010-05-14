@@ -13,6 +13,14 @@ html, body { height: 100% }
 #about_content table tr.alt {
     background-color: #dadada;
 }
+.relations {
+    position: absolute;
+    top:0px;
+    left:0px;
+    font-size:10px;
+    font-weight:normal;
+    text-align: left;
+}
 th {text-align:left; border-bottom: 1px solid #555}
 body { font-family: Futura, Century Gothic, Helvetica, Arial, Sans }
 .phrase { font-size:48px; text-align:center; margin-top:20%; }
