@@ -14,11 +14,15 @@ $help = new HelpGenerator($registered_modifiers);
     <div id="about_content">
       <h1>The Intor.Net - A Helpful Guide</h1>
       <p>This is some automated documentation generated from the modifier classes for URLs.  As such, it might be a little weird.</p>
+      <p>
+        These modifiers are applied to the URLs by following the domain with any number of these thiengs, separated with slashes.  So if we wanted a message of size 150 that was both uppercased and bolded, the url would be:<br/> <a href="http://sample-message.theintor.net/b/uc/s150">http://sample-message.theintor.net/b/uc/s150</a>.
+      </p>
       <table>
         <thead>
-          <th>Name</th>
-          <th>Matches</th>
+          <th style="width:150px">Name</th>
+          <th style="width:250px">Matches</th>
           <th>Description</th>
+          <th style="width:300px;">Sample</th>
         </thead>
         <?php foreach ($help->getAllHelp() as $modifier_help): ?>
         <tr <?php echo ++$count % 2 == 0 ? 'class="alt"' : '' ?>>
@@ -31,6 +35,10 @@ $help = new HelpGenerator($registered_modifiers);
           <td>
             <?php echo $modifier_help->description ?>
           </td>
+          <td>
+            <a href="<?php echo $modifier_help->sample ?>"><?php echo $modifier_help->sample ?></a>
+          </td>
+
         </tr>
         <?php endforeach; ?>
 

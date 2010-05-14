@@ -19,6 +19,16 @@ abstract class Modifier {
                           
     return str_replace(array_keys($translations), array_values($translations), $this->ereg);
   }
+
+  public function getSample() {
+    $translations = array('/' => '',
+                          '\d+' => rand(1,255),
+                          '^' => '',
+                          '$' => '');
+                          
+    return "http://sample-message.theintor.net/".str_replace(array_keys($translations), array_values($translations), $this->ereg);
+  }
+
   public function getHelpText() {
     return $this->help_text;
   }
@@ -46,10 +56,12 @@ class EmboldeningModifier extends Modifier {
   protected $ereg = "/^b$/";
   protected $opening_tag = "<strong>";
   protected $closing_tag = "</strong>";
+  protected $help_text = "Applies the &lt;strong&gt; tag";
 }
 
 class OmgWhyModifier extends Modifier {
   protected $ereg = "/^fffuuuu$/";
+  protected $help_text = "Really irritate viewer";
   protected $opening_tag = "<blink>";
   protected $closing_tag = "</blink>";
 
@@ -58,7 +70,7 @@ class OmgWhyModifier extends Modifier {
 
 class MarqueeModifier extends Modifier {
   protected $ereg = "/^mq$/";
-
+  protected $help_text = "Scrolling scrolling scrolling";
   protected $opening_tag = "<marquee>";
   protected $closing_tag = "</marquee>";
 
@@ -67,7 +79,7 @@ class MarqueeModifier extends Modifier {
 
 class NoMarginModifier extends Modifier {
   protected $ereg = "/^nm$/";
-
+  protected $help_text = "Kills upper margin";
   protected $css_additions = ".phrase { margin-top:0px; } ";
 
 }
@@ -75,6 +87,7 @@ class NoMarginModifier extends Modifier {
 
 class UppercaseModifier extends Modifier {
   protected $ereg = "/^uc$/";
+  protected $help_text = "Converts to UPPERCASE";
   public function getModifiedText($subdomain) {
     return strtoupper($subdomain);
   }
@@ -82,6 +95,7 @@ class UppercaseModifier extends Modifier {
 
 class SizeModifier extends Modifier {
   protected $ereg = "/^s\d+/";
+  protected $help_text = "Changes font size to numbers specified (in pixels)";
   public function getParameters() {
     return array(substr($this->fragment, 1));
   }
@@ -96,15 +110,18 @@ class EmphasisModifier extends Modifier {
   protected $ereg = "/^i$/";
   protected $opening_tag = "<em>";
   protected $closing_tag = "</em>";
+  protected $help_text = "Applies the &lt;em&gt; tag";
 }
 
 class OlTimeyModifier extends Modifier {
   protected $ereg = "/^oltimey$/";
+  protected $help_text = "Like a silent movie card";
   protected $css_additions = "body { background-color: #000; color: #fff; border: 3px double #fff; height: 95%; } .phrase { margin-bottom: 20% }";
 }
 
 class CodifyModifier extends Modifier {
   protected $ereg = "/^ascii$/";
+  protected $help_text = "Converts text to ascii representation";
   public function getModifiedText($subdomain) {
     $result = "";
     for ($i = 0; $i < strlen($subdomain); $i++) {
@@ -116,6 +133,8 @@ class CodifyModifier extends Modifier {
 
 class BinaryModifier extends Modifier {
   protected $ereg = "/^1101$/";
+  protected $help_text = "Converts text to binary representation of ascii values";
+  
   public function getModifiedText($subdomain) {
     $result = "";
     for ($i = 0; $i < strlen($subdomain); $i++) {
@@ -175,6 +194,7 @@ class HelpGenerator {
       $result->name = str_replace("Modifier", "", $modifier_name);
       $result->matches = $modifier->getRegexp();
       $result->description = $modifier->getHelpText();
+      $result->sample = $modifier->getSample();
       array_push($results, $result);
     }
 

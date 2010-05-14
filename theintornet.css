@@ -8,6 +8,7 @@ html, body { height: 100% }
 
 #about_content table {
     width:100%;
+    font-family: monospace;
 }
 #about_content table tr.alt {
     background-color: #dadada;
