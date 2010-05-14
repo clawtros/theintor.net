@@ -8,7 +8,7 @@ $title = str_replace('-',' ',$server_name[0]);
 $db = get_db();
 $ma = new ModifierApplicator($server_name[0], $registered_modifiers, $_SERVER['REQUEST_URI'], $db);
 
-hit_subdomain($db, $subdomain);
+hit_subdomain($db, $ma->raw_subdomain);
 
    ?><!doctype html>
 <html>
