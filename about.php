@@ -27,9 +27,13 @@ $help = new HelpGenerator($registered_modifiers);
 </script>
     <div id="about_content">
       <h1>The Intor.Net - A Helpful Guide</h1>
+      <p>This app formats bits of text that are specified in a URL (anything before ".theintor.net") and modifies it based on whatever follows that URL (anything after ".theintor.net").</p>
       <p>This is some automated documentation generated from the modifier classes for URLs.  As such, it might be a little weird.</p>
       <p>
         These modifiers are applied to the URLs by following the domain with any number of these things, separated with slashes.  So if we wanted a message of size 150 that was both uppercased and bolded, the url would be:<br/> <a href="http://sample-message.theintor.net/b/uc/s150">http://sample-message.theintor.net/b/uc/s150</a>.
+      </p>
+      <p>Relationships between URLs can get kind of interesting to look at.  /g/ generates a graph based on the relationships found and /r/ lists the immediate relationships with links.  You can add or remove multiple relationships with one load:<br/>
+      <a href="http://sample-message.theintor.net/r/g/@example/@test/-@hello-world/">http://sample-message.theintor.net/r/g/@example/@test/-@hello-world/</a><br>
       </p>
       <p>
         One dash in a URL becomes a space, two become a dash and three become a line break.  Here's a sample of some line breaks and text formatting:<br/>

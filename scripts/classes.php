@@ -197,7 +197,7 @@ class SizeModifier extends Modifier {
 class GlowModifier extends Modifier {
   protected $ereg = "/^g\d+$/";
   protected $opening_tag = '';
-  protected $help_text = "Applies a glow effect with specific radius";
+  protected $help_text = "Applies a glow effect with specified number as pixel radius";
   public function getParameters() {
     return array(substr($this->fragment, 1));
   }
