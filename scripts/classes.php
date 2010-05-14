@@ -19,10 +19,14 @@ abstract class Modifier {
   public function Modifier($fragment) {
     $this->fragment = $fragment;
   }
+
+  public function modifyDb($db, $subdomain) { }
+
   public function getRegexp() {
     $translations = array('/' => '',
                           '\d+' => ' followed by numbers',
                           '[0-9a-zA-Z]{6}' => ' followed by 6 digit hexadecimal code',
+                          '.*' => ' followed by any (non-slash) characters',
                           '^' => '',
                           '$' => '');
                           
@@ -32,6 +36,7 @@ abstract class Modifier {
   public function getSample() {
     $translations = array('/' => '',
                           '\d+' => rand(1,80),
+                          '.*' => 'hello-world',
                           '[0-9a-zA-Z]{6}' => randcolor(),
                           '^' => '',
                           '$' => '');
@@ -62,11 +67,10 @@ abstract class Modifier {
   }
 }
 
-class EmboldeningModifier extends Modifier {
-  protected $ereg = "/^b$/";
-  protected $opening_tag = "<strong>";
-  protected $closing_tag = "</strong>";
-  protected $help_text = "Applies the &lt;strong&gt; tag";
+class UnboldeningModifier extends Modifier {
+  protected $ereg = "/^-b$/";
+  protected $css_additions = ".phrase { font-weight:normal }";
+  protected $help_text = "Switches to normal font-weight";
 }
 
 class OmgWhyModifier extends Modifier {
@@ -85,14 +89,31 @@ class MarqueeModifier extends Modifier {
 
 }
 
+class RespondsToModifier extends Modifier {
+  protected $ereg = "/^@.*$/";
+
+  public function getParameters() {
+    return array(substr($this->fragment, 1));
+  }
+
+  public function modifyDb($db, $subdomain) {
+    $params = $this->getParameters();
+    $target = $params[0];
+
+    $stmt = mysqli_prepare($db, "REPLACE INTO response_lookup (responder, target, last_reply_time) VALUES (?, ?, NOW())");
+    mysqli_stmt_bind_param($stmt, 'ss', $subdomain, $target);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_free_result($stmt);
+    mysqli_stmt_close($stmt);  
+    
+  }
+}
 
 class NoMarginModifier extends Modifier {
   protected $ereg = "/^nm$/";
   protected $help_text = "Kills upper margin";
   protected $css_additions = ".phrase { margin-top:0px; } ";
-
 }
-
 
 class UppercaseModifier extends Modifier {
   protected $ereg = "/^uc$/";
@@ -165,12 +186,9 @@ class ShadowModifier extends Modifier {
   protected $help_text = "Applies a drop shadow";
 
   public function getCssAdditions() {
-    //$parameters = $this->getParameters();
-    //return sprintf( ".phrase { text-shadow: #ccc 10px 10px 0px }", $parameters[0] );
     return ".phrase { text-shadow: #ddd 10px 10px 0px }";
   }
 }
-
 
 class EmphasisModifier extends Modifier {
   protected $ereg = "/^i$/";
@@ -185,11 +203,10 @@ class OlTimeyModifier extends Modifier {
   protected $css_additions = "body { background-color: #000; color: #fff; border: 3px double #fff; height: 95%; } .phrase { margin-bottom: 20% }";
 }
 
-
 class SerifModifier extends Modifier {
   protected $ereg = "/^srf/";
   protected $help_text = "Switches to Serif font families";
-  protected $css_additions = "body { font-family: Times, serif}";
+  protected $css_additions = "body { font-family: Georgia, Times, serif}";
 }
 
 class CodifyModifier extends Modifier {
@@ -225,8 +242,20 @@ class ModifierApplicator {
   public $opening_tags = "";
   public $closing_tags = "";
   public $subdomain;
+  public $raw_subdomain;
 
-  public function ModifierApplicator($subdomain, $modifier_candidates, $request_string) {
+  public function getTitle() {
+    return str_replace('-',' ',$raw_subdomain);
+  }
+
+  public function ModifierApplicator($raw_subdomain, $modifier_candidates, $request_string, $db) {
+    $subdomain = str_replace('---','<br/>',$raw_subdomain);
+    $subdomain = str_replace('--','&#8211;', $subdomain);
+    $subdomain = str_replace('-',' ',$subdomain);
+
+    $this->raw_subdomain = $raw_subdomain;
+    $this->subdomain = $subdomain;
+
     $this->subdomain = $subdomain;
     $params = explode('/',$request_string);
 
@@ -239,6 +268,7 @@ class ModifierApplicator {
           $this->opening_tags .= $test_modifier->getOpeningTags();
           $this->closing_tags .= $test_modifier->getClosingTags();
           $this->subdomain = $test_modifier->getModifiedText($this->subdomain);
+          $test_modifier->modifyDb($db, $this->raw_subdomain);
           array_push($this->valid_modifiers, $test_modifier);          
         }
       }
@@ -275,7 +305,7 @@ class HelpGenerator {
   }
 }
 
-$registered_modifiers = array('EmboldeningModifier',
+$registered_modifiers = array('UnboldeningModifier',
                               'EmphasisModifier',
                               'UppercaseModifier',
                               'NoMarginModifier',
@@ -283,6 +313,7 @@ $registered_modifiers = array('EmboldeningModifier',
                               'FGModifier',
                               'SizeModifier',
                               'MarqueeModifier',
+                              'RespondsToModifier',
                               'SerifModifier',
                               'CodifyModifier',
                               'GlowModifier',

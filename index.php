@@ -3,12 +3,11 @@ ini_set('display_errors', 'On');
 include( 'scripts/funcs.php' );
 include( 'scripts/classes.php' );
 $server_name = explode('.',$_SERVER['SERVER_NAME']);
+
 $title = str_replace('-',' ',$server_name[0]);
-$subdomain = str_replace('---','<br/>',$server_name[0]);
-$subdomain = str_replace('--','&#8211;', $subdomain);
-$subdomain = str_replace('-',' ',$subdomain);
-$ma = new ModifierApplicator($subdomain, $registered_modifiers, $_SERVER['REQUEST_URI']);
 $db = get_db();
+$ma = new ModifierApplicator($server_name[0], $registered_modifiers, $_SERVER['REQUEST_URI'], $db);
+
 hit_subdomain($db, $subdomain);
 
    ?><!doctype html>
@@ -26,5 +25,5 @@ hit_subdomain($db, $subdomain);
       <h1 class="phrase"><?php echo $ma->getModifiedSubdomain(); ?></h1>
     </div>
   </body>
-  <!-- an Adam Benzan internet concern -->
+  <!-- an Adam Benzan internet concern - http://blog.removablefeast.com/ http://cruciverbalizer.com/ -->
 </html>
