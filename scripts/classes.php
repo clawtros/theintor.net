@@ -75,6 +75,20 @@ class UnboldeningModifier extends Modifier {
   protected $help_text = "Switches to normal font-weight";
 }
 
+
+class TranslatePunctuationModifier extends Modifier {
+  protected $ereg = "/^p$/";
+  protected $help_text = "Translates certain strings in urls to punctuation (period, bang, questionmark, interrobang, omgomg)";
+  public function getModifiedText($text) {
+    $translation = array('period'=>'.',
+      'bang'=>'!',
+      'interrobang'=>'&#8253;',
+      'questionmark'=>'?',
+      'omgomg'=>'!!!!!');
+    return str_replace(array_keys($translations), array_values($translations), $text);
+  }
+}
+
 class OmgWhyModifier extends Modifier {
   protected $ereg = "/^fffuuuu$/";
   protected $help_text = "Really irritate viewer";
@@ -381,6 +395,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'RemoveResponseModifier',
                               'BinaryModifier',
                               'OmgWhyModifier',
+                              'TranslatePunctuationModifier',
                               'OlTimeyModifier');
 
 
