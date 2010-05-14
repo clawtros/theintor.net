@@ -18,6 +18,9 @@ $help = new HelpGenerator($registered_modifiers);
         These modifiers are applied to the URLs by following the domain with any number of these thiengs, separated with slashes.  So if we wanted a message of size 150 that was both uppercased and bolded, the url would be:<br/> <a href="http://sample-message.theintor.net/b/uc/s150">http://sample-message.theintor.net/b/uc/s150</a>.
       </p>
       <p>
+        One dash in a URL becomes a space, two become a dash and three become a line break.  Here's a sample of some line breaks and text formatting:<br/>
+        <a href="http://keep-calm---and---carry-on.theintor.net/uc/bgff0000/cffffff">http://keep-calm---and---carry-on.theintor.net/uc/bgff0000/cffffff</a>
+      </p>
       <table>
         <thead>
           <th style="width:150px">Name</th>
