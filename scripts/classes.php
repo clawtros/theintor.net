@@ -185,6 +185,13 @@ class OlTimeyModifier extends Modifier {
   protected $css_additions = "body { background-color: #000; color: #fff; border: 3px double #fff; height: 95%; } .phrase { margin-bottom: 20% }";
 }
 
+
+class SerifModifier extends Modifier {
+  protected $ereg = "/^srf/";
+  protected $help_text = "Switches to Serif font families";
+  protected $css_additions = "body { font-family: Times, serif}";
+}
+
 class CodifyModifier extends Modifier {
   protected $ereg = "/^ascii$/";
   protected $help_text = "Converts text to ascii representation";
@@ -276,6 +283,7 @@ $registered_modifiers = array('EmboldeningModifier',
                               'FGModifier',
                               'SizeModifier',
                               'MarqueeModifier',
+                              'SerifModifier',
                               'CodifyModifier',
                               'GlowModifier',
                               'ShadowModifier',
