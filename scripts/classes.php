@@ -50,6 +50,18 @@ class UppercaseModifier extends Modifier {
   }
 }
 
+class SizeModifier extends Modifier {
+  protected $ereg = "/^s\d+/";
+  public function getParameters() {
+    return array(substr($this->fragment, 1));
+  }
+
+  public function getCssAdditions() {
+    $parameters = $this->getParameters();
+    return sprintf( ".phrase { font-size: %dpx }", $parameters[0] );
+  }
+}
+
 class EmphasisModifier extends Modifier {
   protected $ereg = "/^i$/";
   protected $opening_tag = "<em>";
@@ -97,6 +109,7 @@ $registered_modifiers = array('EmboldeningModifier',
                               'EmbiggeningModifier',
                               'EmphasisModifier',
                               'UppercaseModifier',
+                              'SizeModifier',
                               'OlTimeyModifier');
 
 
