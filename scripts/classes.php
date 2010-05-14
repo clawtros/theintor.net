@@ -124,6 +124,28 @@ class GraphVizModifier extends Modifier {
   }
 }
 
+class RemoveResponseModifier extends Modifier {
+  protected $ereg = "/^-@.*$/";
+  protected $help_text = "Removes a URL association";
+
+  public function getParameters() {
+    return array(substr($this->fragment, 2));
+  }
+
+  public function modifyDb() {
+    $db = get_db();
+    $params = $this->getParameters();
+    $target = $params[0];
+
+    $stmt = mysqli_prepare($db, "delete from response_lookup where responder=? and target=?");
+    mysqli_stmt_bind_param($stmt, 'ss', $this->subdomain, $target);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_free_result($stmt);
+    mysqli_stmt_close($stmt);  
+    
+  }
+}
+
 class RespondsToModifier extends Modifier {
   protected $ereg = "/^@.*$/";
   protected $help_text = "Associates this URL with another URL, the characters specified are exactly what comes before .theintor.net";
@@ -356,6 +378,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'CodifyModifier',
                               'GlowModifier',
                               'ShadowModifier',
+                              'RemoveResponseModifier',
                               'BinaryModifier',
                               'OmgWhyModifier',
                               'OlTimeyModifier');
