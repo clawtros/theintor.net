@@ -63,7 +63,7 @@ if ($subdomain != "theintor") {
 }
 $result_string = implode(';', array_keys($results));
 
-$dot_str = "digraph test { ".$result_string." }";
+$dot_str = "digraph test {  graph [truecolor bgcolor=\"#ffffff00\"] ".$result_string." }";
 $exec_str = "echo '$dot_str' | ".$parsed_ini['graphviz_location']." -Gsize=[6,6] -Tpng -Nstyle=filled ";
 if (!$_GET['dbg']) {
   header("Content-Type: image/png");
