@@ -25,5 +25,5 @@ hit_subdomain($db, $ma->raw_subdomain);
       <h1 class="phrase"><?php echo $ma->getModifiedSubdomain(); ?></h1>
     </div>
   </body>
-  <!-- an Adam Benzan internet concern - http://blog.removablefeast.com/ http://cruciverbalizer.com/ -->
+  <!-- a member of Adam Benzan's Internet Conglomerate - http://blog.removablefeast.com/ http://cruciverbalizer.com/ -->
 </html>
