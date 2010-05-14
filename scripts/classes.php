@@ -1,5 +1,13 @@
 <?php
 
+function randcolor() {
+  $result = "";
+  foreach (range(1,3) as $i) {
+    $result .= base_convert(rand(1,255),10,16);
+  }
+  return $result;
+}
+
 abstract class Modifier {
   protected $fragment;
   protected $ereg = "";
@@ -14,6 +22,7 @@ abstract class Modifier {
   public function getRegexp() {
     $translations = array('/' => '',
                           '\d+' => ' followed by numbers',
+                          '[0-9a-zA-Z]{6}' => ' followed by 6 digit hexadecimal code',
                           '^' => '',
                           '$' => '');
                           
@@ -23,6 +32,7 @@ abstract class Modifier {
   public function getSample() {
     $translations = array('/' => '',
                           '\d+' => rand(1,80),
+                          '[0-9a-zA-Z]{6}' => randcolor(),
                           '^' => '',
                           '$' => '');
                           
@@ -120,6 +130,35 @@ class GlowModifier extends Modifier {
 }
 
 
+class BGModifier extends Modifier {
+  protected $ereg = "/^bg[0-9a-zA-Z]{6}$/";
+  protected $help_text = "Alters background-color";
+  public function getParameters() {
+    return array(substr($this->fragment, 2));
+  }
+
+  public function getCssAdditions() {
+    $parameters = $this->getParameters();
+    return sprintf( "body { background-color: #%s }", $parameters[0] );
+    
+  }
+}
+
+
+class FGModifier extends Modifier {
+  protected $ereg = "/^c[0-9a-zA-Z]{6}$/";
+  protected $help_text = "Alters text color";
+  public function getParameters() {
+    return array(substr($this->fragment, 1));
+  }
+
+  public function getCssAdditions() {
+    $parameters = $this->getParameters();
+    return sprintf( "body { color: #%s }", $parameters[0] );
+    
+  }
+}
+
 class ShadowModifier extends Modifier {
   protected $ereg = "/^sh$/";
   protected $opening_tag = '';
@@ -128,7 +167,7 @@ class ShadowModifier extends Modifier {
   public function getCssAdditions() {
     //$parameters = $this->getParameters();
     //return sprintf( ".phrase { text-shadow: #ccc 10px 10px 0px }", $parameters[0] );
-    return ".phrase { text-shadow: #ccc 10px 10px 10px }";
+    return ".phrase { text-shadow: #ddd 10px 10px 0px }";
   }
 }
 
@@ -233,6 +272,8 @@ $registered_modifiers = array('EmboldeningModifier',
                               'EmphasisModifier',
                               'UppercaseModifier',
                               'NoMarginModifier',
+                              'BGModifier',
+                              'FGModifier',
                               'SizeModifier',
                               'MarqueeModifier',
                               'CodifyModifier',
