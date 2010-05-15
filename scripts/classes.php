@@ -75,7 +75,6 @@ class UnboldeningModifier extends Modifier {
   protected $help_text = "Switches to normal font-weight";
 }
 
-
 class TranslatePunctuationModifier extends Modifier {
   protected $ereg = "/^p$/";
   protected $help_text = "Translates certain strings in urls to punctuation (period, bang, questionmark, interrobang, omgomg)";
@@ -95,6 +94,15 @@ class OmgWhyModifier extends Modifier {
   protected $help_text = "Really irritate viewer";
   protected $opening_tag = "<blink>";
   protected $closing_tag = "</blink>";
+}
+
+
+class Rot13Modifier extends Modifier {
+  protected $ereg = "/^r13$/";
+  protected $help_text = "Applies an ROT13 filter.  Note: using this filter an even number of times does nothing.";
+  public function getModifiedText($text) {
+    return str_rot13($text);
+  }
 }
 
 class MarqueeModifier extends Modifier {
@@ -396,6 +404,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'RemoveResponseModifier',
                               'BinaryModifier',
                               'OmgWhyModifier',
+                              'Rot13Modifier',
                               'TranslatePunctuationModifier',
                               'OlTimeyModifier');
 
