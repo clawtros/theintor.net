@@ -2,7 +2,7 @@
 ini_set('display_errors', 'On');     
 include( 'scripts/funcs.php' );
 include( 'scripts/classes.php' );
-$server_name = explode('.',$_SERVER['SERVER_NAME']);
+$server_name = explode('.',idn_to_utf8($_SERVER['SERVER_NAME']));
 
 $title = str_replace('-',' ',$server_name[0]);
 $db = get_db();

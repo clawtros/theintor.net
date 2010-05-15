@@ -13,7 +13,9 @@ function get_relationships($name=null, $depth=1, $max_depth=5) {
   $results = array();
 
   if ($name) {
-    $stmt = mysqli_prepare($db, "SELECT responder, target, last_reply_time FROM response_lookup where responder=? or target=?");
+    $sql = "SELECT responder, target, last_reply_time FROM response_lookup where responder=? or target=?";
+    if ($_GET['l']) { $sql .= ' limit '.(int)$_GET['l']; }
+    $stmt = mysqli_prepare($db, $sql);
     mysqli_stmt_bind_param($stmt, 'ss', $name, $name);
   } else {
     $sql = "SELECT responder, target, last_reply_time FROM response_lookup order by last_reply_time desc";
@@ -67,7 +69,7 @@ $result_string = implode(';', array_keys($results));
 
 $dot_str = "digraph test {  graph [truecolor bgcolor=\"#ffffff00\"] 
 ".$result_string." }";
-$exec_str = "echo '$dot_str' | ".$parsed_ini['graphviz_location']." -Gsize=10,10 -Tpng -Nstyle=filled -Kfdp";
+$exec_str = "echo '$dot_str' | ".$parsed_ini['graphviz_location']." -Gsize=10,15 -Tpng -Nstyle=filled -Kfdp";
 if (!$_GET['dbg']) {
   header("Content-Type: image/png");
   passthru($exec_str);
