@@ -16,7 +16,9 @@ function get_relationships($name=null, $depth=1, $max_depth=5) {
     $stmt = mysqli_prepare($db, "SELECT responder, target, last_reply_time FROM response_lookup where responder=? or target=?");
     mysqli_stmt_bind_param($stmt, 'ss', $name, $name);
   } else {
-    $stmt = mysqli_prepare($db, "SELECT responder, target, last_reply_time FROM response_lookup ");
+    $sql = "SELECT responder, target, last_reply_time FROM response_lookup order by last_reply_time desc";
+    if ($_GET['l']) { $sql .= ' limit '.(int)$_GET['l']; }
+    $stmt = mysqli_prepare($db,$sql); 
   }
   mysqli_stmt_bind_result($stmt, $responder, $target, $last_reply_time);
   mysqli_stmt_execute($stmt);
@@ -63,8 +65,9 @@ if ($subdomain != "theintor") {
 }
 $result_string = implode(';', array_keys($results));
 
-$dot_str = "digraph test {  graph [truecolor bgcolor=\"#ffffff00\"] ".$result_string." }";
-$exec_str = "echo '$dot_str' | ".$parsed_ini['graphviz_location']." -Gsize=[6,6] -Tpng -Nstyle=filled ";
+$dot_str = "digraph test {  graph [truecolor bgcolor=\"#ffffff00\"] 
+".$result_string." }";
+$exec_str = "echo '$dot_str' | ".$parsed_ini['graphviz_location']." -Gsize=10,10 -Tpng -Nstyle=filled -Kfdp";
 if (!$_GET['dbg']) {
   header("Content-Type: image/png");
   passthru($exec_str);

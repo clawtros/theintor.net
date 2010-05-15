@@ -80,9 +80,10 @@ class TranslatePunctuationModifier extends Modifier {
   protected $ereg = "/^p$/";
   protected $help_text = "Translates certain strings in urls to punctuation (period, bang, questionmark, interrobang, omgomg)";
   public function getModifiedText($text) {
-    $translation = array('period'=>'.',
-      'bang'=>'!',
+    $translations = array('period'=>'.',
       'interrobang'=>'&#8253;',
+      '_'=>'&lsquo;',
+      'bang'=>'!',
       'questionmark'=>'?',
       'omgomg'=>'!!!!!');
     return str_replace(array_keys($translations), array_values($translations), $text);
