@@ -15,7 +15,7 @@ function get_relationships($name=null, $depth=1, $max_depth=2) {
   $results = array();
 
   if ($name) {
-    $sql = "SELECT responder, target, last_reply_time FROM response_lookup where responder=? or target=?";
+    $sql = "SELECT responder, target, last_reply_time FROM response_lookup where responder=? or target=? order by last_reply_time desc ";
     if ($_GET['l']) { $sql .= ' limit '.(int)$_GET['l']; }
     $stmt = mysqli_prepare($db, $sql);
     mysqli_stmt_bind_param($stmt, 'ss', $name, $name);
@@ -60,7 +60,9 @@ function get_relationships($name=null, $depth=1, $max_depth=2) {
 $results = get_relationships($subdomain);
 $result_string = implode(';', array_keys($results));
 
-$dot_str = "digraph test {  graph [truecolor bgcolor=\"#ffffff00\"] 
+$dot_str = "digraph test {  
+	\"$subdomain\" [color=lightyellow1];
+graph [truecolor bgcolor=\"#ffffff00\"] 
 ".$result_string." }";
 $exec_str = "echo '$dot_str' | ".$parsed_ini['graphviz_location']." -Gsize=10,15 -Tpng -Nstyle=filled -Kfdp";
 if (!$_GET['dbg']) {
