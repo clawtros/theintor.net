@@ -58,7 +58,7 @@ function get_relationships($name=null, $depth=1, $max_depth=2) {
 }
 
 function sanitize_subdomain($subdomain) {
-  return escapeshellcmd(urldecode($subdomain));
+  return escapeshellcmd($subdomain);
 }
 
 function format_result($result) {
