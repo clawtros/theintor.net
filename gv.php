@@ -58,7 +58,7 @@ function get_relationships($name=null, $depth=1, $max_depth=2) {
 }
 
 function sanitize_subdomain($subdomain) {
-  return escapeshellcmd(urldecode($subdomain));
+  return $subdomain;
 }
 
 function format_result($result) {
@@ -67,13 +67,18 @@ function format_result($result) {
 
 $results = get_relationships($subdomain);
 $result_string = implode('', array_map('format_result', $results));
-$dot_str = "digraph test { ".($subdomain ? " \"$subdomain\" [color=gold]; " : "" ). "
+$dot_str = "digraph test { ".($subdomain ? " \"$subdomain\" [shape=polygon, color=gold]; " : "" ). "
 graph [truecolor bgcolor=\"#ffffff00\"] 
 ".urldecode($result_string)." }";
-$exec_str = "echo '$dot_str' | ".$parsed_ini['graphviz_location']." -Gsize=10,15 -Tpng -Nstyle=filled -Kfdp";
+$tmp_file = tempnam($parsed_ini['graphviz_location'], 'intornet');
+$handle = fopen($tmp_file, "w");
+fwrite($handle, $dot_str);
+$exec_str = "cat $tmp_file | ".$parsed_ini['graphviz_location']." -Gsize=10,15 -Tpng -Nstyle=filled -Kfdp";
 if (!$_GET['dbg']) {
   header("Content-Type: image/png");
   passthru($exec_str);
+  fclose($handle);
+  unlink($tmp_file);
 } else {
   print_r($result_string);
   //  print_r($results);
