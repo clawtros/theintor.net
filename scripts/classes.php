@@ -214,7 +214,7 @@ class SizeModifier extends Modifier {
 
   public function getCssAdditions() {
     $parameters = $this->getParameters();
-    return sprintf( ".phrase { font-size: %dpx }", $parameters[0] );
+    return sprintf( ".phrase { font-size: %dpx; line-height: 0px}", $parameters[0], $parameters[0] );
   }
 }
 

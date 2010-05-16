@@ -39,7 +39,7 @@ hit_subdomain($db, $ma->raw_subdomain);
       <?php if ($subdomain): ?>
       <h1 class="phrase"><?php echo $ma->getModifiedSubdomain(); ?></h1>
       <?php else: ?>
-      <h1 class="frontpage phrase" style="margin-top:0px;">THE INTOR.NET - LAST 25 CONNECTIONS</h1>
+      <h1 class="frontpage phrase" style="margin-top:0px;">THE INTOR.NET - LAST 25 CONNECTIONS - <a href="/about/">ABOUT</a></h1>
       <img src="http://<?php echo $_SERVER['SERVER_NAME'] ?>/gv.php?l=25&sa=t">
       <div class="connections">
       <?php foreach (get_last_connections($db, 25) as $connection): ?>
