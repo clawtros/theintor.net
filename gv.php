@@ -4,7 +4,9 @@ include( 'scripts/classes.php' );
 
 $parsed_ini = parse_ini_file("scripts/conf.ini");
 $server_name = explode('.',$_SERVER['SERVER_NAME']);
-$subdomain = $server_name[0];
+
+$subdomain = get_raw_subdomain();
+//var_dump(get_raw_subdomain()); die;
 $result = "";
 $db = get_db();
 
@@ -55,12 +57,7 @@ function get_relationships($name=null, $depth=1, $max_depth=2) {
   return $results;
 }
 
-if ($subdomain != "theintor") {
-  $current_subdomain = $subdomain;
-  $results = get_relationships($current_subdomain);
-} else {
-  $results = get_relationships();
-}
+$results = get_relationships($subdomain);
 $result_string = implode(';', array_keys($results));
 
 $dot_str = "digraph test {  graph [truecolor bgcolor=\"#ffffff00\"] 

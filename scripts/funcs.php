@@ -8,6 +8,11 @@ function get_db() {
   return mysqli_connect($ini['host'],$ini['user'],$ini['password'],$ini['schema']);
 }
 
+function get_raw_subdomain() {
+  $server_name = explode('.',idn_to_utf8($_SERVER['SERVER_NAME']));
+  return implode(".",array_slice($server_name,0,sizeof($server_name)-2));
+}
+
 /**
  * adds a subdomain to the database
  *
