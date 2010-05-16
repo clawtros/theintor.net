@@ -31,6 +31,22 @@ function subdomain_exists($db, $subdomain) {
   return $result;
 }
 
+function get_last_connections($db, $limit) {
+  $stmt = mysqli_prepare($db, "SELECT responder, target FROM response_lookup ORDER BY last_reply_time DESC LIMIT ?");
+  mysqli_stmt_bind_param($stmt, 'd', $limit);
+  mysqli_stmt_bind_result($stmt, $responder, $target);
+  mysqli_stmt_execute($stmt);
+  $storage = array();
+  while (mysqli_stmt_fetch($stmt)) {
+    $storage[$responder] = True;
+    $storage[$target] = True;
+  }
+
+  mysqli_stmt_free_result($stmt);
+  mysqli_stmt_close($stmt);  
+  return array_keys($storage);
+}
+
 /**
  * adds a subdomain to the database
  *

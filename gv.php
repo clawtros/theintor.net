@@ -57,20 +57,26 @@ function get_relationships($name=null, $depth=1, $max_depth=2) {
   return $results;
 }
 
-$results = get_relationships($subdomain);
-$result_string = implode(';', array_keys($results));
+function sanitize_subdomain($subdomain) {
+  return escapeshellcmd(urldecode($subdomain));
+}
 
-$dot_str = "digraph test {  
-	\"$subdomain\" [color=lightyellow1];
+function format_result($result) {
+  return '"'.sanitize_subdomain($result[0]).'" -> "'.sanitize_subdomain($result[1]).'";';
+}
+
+$results = get_relationships($subdomain);
+$result_string = implode('', array_map('format_result', $results));
+$dot_str = "digraph test { ".($subdomain ? " \"$subdomain\" [color=gold]; " : "" ). "
 graph [truecolor bgcolor=\"#ffffff00\"] 
-".$result_string." }";
+".urldecode($result_string)." }";
 $exec_str = "echo '$dot_str' | ".$parsed_ini['graphviz_location']." -Gsize=10,15 -Tpng -Nstyle=filled -Kfdp";
 if (!$_GET['dbg']) {
   header("Content-Type: image/png");
   passthru($exec_str);
 } else {
   print_r($result_string);
-  print_r($results);
+  //  print_r($results);
 }
 
 ?>
