@@ -128,7 +128,8 @@ class ShowRelationshipsModifier extends Modifier {
     
     $result = '<ul class="relations">';
     while (mysqli_stmt_fetch($stmt)) {
-      $result .= "<li><a href=\"http://$responder.theintor.net/r/\">$responder</a> referred to <a href=\"http://$target.theintor.net/r/\">$target</a><!-- on $last_reply_time --></li>";
+      $target = urldecode($target);
+      $result .= "<li><a href=\"http://$responder.theintor.net/g/r/\">$responder</a> referred to <a href=\"http://$target.theintor.net/g/r/\">$target</a><!-- on $last_reply_time --></li>";
     }
     $result .= "</ul>";
 
@@ -179,10 +180,10 @@ class RespondsToModifier extends Modifier {
   public function modifyDb() {
     $db = get_db();
     $params = $this->getParameters();
-    $target = $params[0];
+    $target = utf8_encode($params[0]);
 
     $stmt = mysqli_prepare($db, "REPLACE INTO response_lookup (responder, target, last_reply_time) VALUES (?, ?, NOW())");
-    mysqli_stmt_bind_param($stmt, 'ss', $this->subdomain, $target);
+    mysqli_stmt_bind_param($stmt, 'ss', $this->subdomain, strtolower(urlencode($target)));
     mysqli_stmt_execute($stmt);
     mysqli_stmt_free_result($stmt);
     mysqli_stmt_close($stmt);  

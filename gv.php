@@ -8,7 +8,7 @@ $subdomain = $server_name[0];
 $result = "";
 $db = get_db();
 
-function get_relationships($name=null, $depth=1, $max_depth=5) {
+function get_relationships($name=null, $depth=1, $max_depth=2) {
   global $db;
   $results = array();
 
@@ -43,15 +43,11 @@ function get_relationships($name=null, $depth=1, $max_depth=5) {
         }
       }
       if ($responder != $name) {
-        list($responder, $target) = $result;
-        if ($target != $name) {
-          $rels = get_relationships($target, $depth + 1);
+          $rels = get_relationships($responder, $depth + 1);
           foreach ($rels as $key=>$vals) {
             list($k, $v) = $vals;
             $newresults["\"$k\" -> \"$v\""]=array($k,$v);
           }
-        }
-        
       }
     }
     $results = $newresults;
