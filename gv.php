@@ -10,53 +10,6 @@ $subdomain = get_raw_subdomain();
 $result = "";
 $db = get_db();
 
-function get_relationships($name=null, $depth=1, $max_depth=2) {
-  global $db;
-  $results = array();
-
-  if ($name) {
-    $sql = "SELECT responder, target, last_reply_time FROM response_lookup where responder=? or target=? order by last_reply_time desc ";
-    if ($_GET['l']) { $sql .= ' limit '.(int)$_GET['l']; }
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 'ss', $name, $name);
-  } else {
-    $sql = "SELECT responder, target, last_reply_time FROM response_lookup order by last_reply_time desc";
-    if ($_GET['l']) { $sql .= ' limit '.(int)$_GET['l']; }
-    $stmt = mysqli_prepare($db,$sql); 
-  }
-  mysqli_stmt_bind_result($stmt, $responder, $target, $last_reply_time);
-  mysqli_stmt_execute($stmt);
-
-  while (mysqli_stmt_fetch($stmt)) {
-    $results["\"$responder\" -> \"$target\""] = array($responder, $target);
-  }
-  mysqli_stmt_free_result($stmt);
-  mysqli_stmt_close($stmt);  
-
-  if ($depth < $max_depth && $name) {
-    $newresults = $results;
-    foreach ($results as $result) {
-      list($responder, $target) = $result;
-      if ($target != $name) {
-        $rels = get_relationships($target, $depth + 1);
-        foreach ($rels as $key=>$vals) {
-          list($k, $v) = $vals;
-          $newresults["\"$k\" -> \"$v\""]=array($k,$v);
-        }
-      }
-      if ($responder != $name) {
-          $rels = get_relationships($responder, $depth + 1);
-          foreach ($rels as $key=>$vals) {
-            list($k, $v) = $vals;
-            $newresults["\"$k\" -> \"$v\""]=array($k,$v);
-          }
-      }
-    }
-    $results = $newresults;
-  }
-  return $results;
-}
-
 function sanitize_subdomain($subdomain) {
   return $subdomain;
 }
@@ -65,7 +18,7 @@ function format_result($result) {
   return '"'.sanitize_subdomain($result[0]).'" -> "'.sanitize_subdomain($result[1]).'";';
 }
 
-$results = get_relationships($subdomain);
+$results = get_relationships( $db, $subdomain, 2);
 $result_string = implode('', array_map('format_result', $results));
 $dot_str = "digraph test { ".($subdomain ? " \"$subdomain\" [shape=polygon, color=gold]; " : "" ). "
 graph [truecolor bgcolor=\"#ffffff00\"] 

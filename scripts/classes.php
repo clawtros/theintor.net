@@ -9,6 +9,8 @@ function randcolor() {
 }
 
 abstract class Modifier {
+  protected $modifies_display=true;
+  protected $order = 0;
   protected $subdomain;
   protected $fragment;
   protected $ereg = "";
@@ -20,6 +22,14 @@ abstract class Modifier {
   public function Modifier($fragment, $subdomain) {
     $this->fragment = $fragment;
     $this->subdomain = $subdomain;
+  }
+
+  public function modifiesDisplay() {
+    return $this->modifies_display;
+  }
+
+  public function getOrder() {
+    return $this->order;
   }
 
   public function modifyDb($db) { }
@@ -61,6 +71,10 @@ abstract class Modifier {
   public function getModifiedText($text) {
     return $text;
   }
+  public function getFragment() {
+    return $this->fragment;
+  }
+  
   public function isValid() {
     return preg_match($this->ereg, $this->fragment);
   }
@@ -116,6 +130,7 @@ class MarqueeModifier extends Modifier {
 class ShowRelationshipsModifier extends Modifier {
   protected $ereg = "/^r$/";
   protected $help_text = "Show relationships to other URLs";
+  protected $modifies_display = false;
 
   public function getClosingTags() {
     $result = "";
@@ -143,12 +158,16 @@ class ShowRelationshipsModifier extends Modifier {
 class GraphVizModifier extends Modifier {
   protected $ereg = "/^g$/";
   protected $help_text = "Renders a graph of relationships";
+  protected $modifies_display = false;
+
   public function getClosingTags() {
     return '<img src="http://'.$_SERVER['SERVER_NAME'].'/gv.php?l=13" alt="graph viz" class="graphviz_image" />';
   }
 }
 
 class RemoveResponseModifier extends Modifier {
+
+  protected $modifies_display = false;
   protected $ereg = "/^-@.*$/";
   protected $help_text = "Removes a URL association";
 
@@ -171,6 +190,7 @@ class RemoveResponseModifier extends Modifier {
 }
 
 class RespondsToModifier extends Modifier {
+  protected $modifies_display = false;
   protected $ereg = "/^@.*$/";
   protected $help_text = "Associates this URL with another URL, the characters specified are exactly what comes before .theintor.net";
   public function getParameters() {
@@ -318,6 +338,18 @@ class BinaryModifier extends Modifier {
   }
 }
 
+function is_display_param($modifier) {
+  return $modifier->modifiesDisplay();
+}
+
+function is_not_display_param($modifier) {
+  return $modifier->modifiesDisplay();
+}
+
+function get_fragment($modifier) {
+  return $modifier->getFragment();
+}
+
 class ModifierApplicator {
   private $valid_modifiers = array();
   public $css_additions = "";
@@ -325,12 +357,15 @@ class ModifierApplicator {
   public $closing_tags = "";
   public $subdomain;
   public $raw_subdomain;
+  private $_db;
 
   public function getTitle() {
     return str_replace('-',' ',$raw_subdomain);
   }
 
   public function ModifierApplicator($raw_subdomain, $modifier_candidates, $request_string, $db) {
+    $this->_db = $db;
+        
     $subdomain = str_replace('---','<br/>',$raw_subdomain);
     $subdomain = str_replace('--','&#8211;', $subdomain);
     $subdomain = str_replace('-',' ',$subdomain);
@@ -338,23 +373,67 @@ class ModifierApplicator {
     $this->raw_subdomain = $raw_subdomain;
     $this->subdomain = $subdomain;
 
-    $this->subdomain = $subdomain;
+    $this->valid_modifiers = $this->getModifiersFromRequestUri($request_string, $modifier_candidates);
+
+    if ($this->useDefaultParams()) {
+      $domain = fetch_subdomain($this->_db, $raw_subdomain);
+      
+      if ($domain) {
+        $this->valid_modifiers = array_merge($this->valid_modifiers, 
+                                             $this->getModifiersFromRequestUri($domain['request_uri'], $modifier_candidates, true));
+      }
+
+    } else {
+      $display_uri = $this->getDisplayUri();
+      if ($display_uri) update_subdomain($db, $raw_subdomain, $display_uri);
+    }
+    
+  }
+
+  public function getDisplayUri() {
+    $result = array();
+    foreach ($this->valid_modifiers as $modifier) {
+      if ($modifier->modifiesDisplay()) $result["/".$modifier->getFragment()] = true;
+    }
+    return implode("",array_keys($result));
+  }
+
+  public function getNonDisplayUri() {
+    $result = "";
+    foreach ($this->valid_modifiers as $modifier) {
+      if (!$modifier->modifiesDisplay()) $result .= "/".$modifier->getFragment();
+    }
+    return $result;
+  }
+
+  private function getModifiersFromRequestUri($request_string, $modifier_candidates, $display_only = false) {
     $params = explode('/',$request_string);
+    $valid_modifiers = array();
 
     foreach ($params as $param) {
       foreach ($modifier_candidates as $modifier) {
         $test_modifier = new $modifier($param, $this->raw_subdomain);
 
-        if ($test_modifier->isValid()) {
+        if ($test_modifier->isValid() && (($display_only && $test_modifier->modifiesDisplay()) || !$display_only)) {
           $this->css_additions .= $test_modifier->getCssAdditions();
           $this->opening_tags .= $test_modifier->getOpeningTags();
           $this->closing_tags .= $test_modifier->getClosingTags();
           $this->subdomain = $test_modifier->getModifiedText($this->subdomain);
-          $test_modifier->modifyDb($db, $this->raw_subdomain);
-          array_push($this->valid_modifiers, $test_modifier);          
+          $test_modifier->modifyDb($this->_db, $this->raw_subdomain);
+          array_push($valid_modifiers, $test_modifier);          
         }
       }
     }
+    
+    return $valid_modifiers;
+  }  
+
+  public function useDefaultParams() {
+    foreach ($this->valid_modifiers as $modifier) {
+      if ($modifier->modifiesDisplay()) return false;
+    }
+    
+    return true;
   }
   
   public function getModifiedSubdomain() {
