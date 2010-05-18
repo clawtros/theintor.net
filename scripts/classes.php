@@ -368,6 +368,7 @@ class ModifierApplicator {
   public $closing_tags = "";
   public $subdomain;
   public $raw_subdomain;
+  public $db_record = array();
   public $js_includes = array(); 
   private $_db;
 
@@ -384,22 +385,22 @@ class ModifierApplicator {
 
     $this->raw_subdomain = $raw_subdomain;
     $this->subdomain = $subdomain;
-
+    $this->db_record = fetch_subdomain($this->_db, $raw_subdomain);
     $this->valid_modifiers = $this->getModifiersFromRequestUri($request_string, $modifier_candidates);
-    /*
+
     if ($this->useDefaultParams()) {
-      $domain = fetch_subdomain($this->_db, $raw_subdomain);
+
       
-      if ($domain) {
+      if ($this->db_record) {
         $this->valid_modifiers = array_merge($this->valid_modifiers, 
-                                             $this->getModifiersFromRequestUri($domain['request_uri'], $modifier_candidates, true));
+                                             $this->getModifiersFromRequestUri($this->db_record['request_uri'], $modifier_candidates, true));
       }
 
     } else {
       $display_uri = $this->getDisplayUri();
       if ($display_uri) update_subdomain($db, $raw_subdomain, $display_uri);
     }
-    */
+
   }
 
   public function getDisplayUri() {

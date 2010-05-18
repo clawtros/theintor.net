@@ -5,7 +5,7 @@ var destination;
 function type_character() {
     $("#typing_location").append(phrase[typing_position++]);
     if (typing_position < phrase.length) { 
-        setTimeout(type_character, Math.floor(Math.random()*500)+150);
+        setTimeout(type_character, Math.floor(Math.random()*500)+50);
     } else {
         $("#cursor").hide();
     }
