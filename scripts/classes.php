@@ -18,6 +18,7 @@ abstract class Modifier {
   protected $closing_tag = "";
   protected $css_additions = "";
   protected $help_text = "None yet";
+  protected $js_includes = array();
 
   public function Modifier($fragment, $subdomain) {
     $this->fragment = $fragment;
@@ -26,6 +27,10 @@ abstract class Modifier {
 
   public function modifiesDisplay() {
     return $this->modifies_display;
+  }
+
+  public function getJsIncludes() {
+    return $this->js_includes;
   }
 
   public function getOrder() {
@@ -323,6 +328,8 @@ class CodifyModifier extends Modifier {
   }
 }
 
+
+
 class BinaryModifier extends Modifier {
   protected $ereg = "/^1101$/";
   protected $help_text = "Converts text to binary representation of ascii values";
@@ -338,17 +345,21 @@ class BinaryModifier extends Modifier {
   }
 }
 
-function is_display_param($modifier) {
-  return $modifier->modifiesDisplay();
+class FadeInModifier extends Modifier {
+  protected $ereg = "/^fi$/";
+  protected $js_includes = array('jquery', 'fadein');
 }
 
-function is_not_display_param($modifier) {
-  return $modifier->modifiesDisplay();
+class ApproachModifier extends Modifier {
+  protected $ereg = "/^a$/";
+  protected $js_includes = array('jquery', 'jquery.approach','apply-approach');
 }
 
-function get_fragment($modifier) {
-  return $modifier->getFragment();
+class TypeModifier extends Modifier {
+  protected $ereg = "/^t$/";
+  protected $js_includes = array('jquery', 'type');
 }
+
 
 class ModifierApplicator {
   private $valid_modifiers = array();
@@ -357,6 +368,7 @@ class ModifierApplicator {
   public $closing_tags = "";
   public $subdomain;
   public $raw_subdomain;
+  public $js_includes = array(); 
   private $_db;
 
   public function getTitle() {
@@ -374,7 +386,7 @@ class ModifierApplicator {
     $this->subdomain = $subdomain;
 
     $this->valid_modifiers = $this->getModifiersFromRequestUri($request_string, $modifier_candidates);
-
+    /*
     if ($this->useDefaultParams()) {
       $domain = fetch_subdomain($this->_db, $raw_subdomain);
       
@@ -387,7 +399,7 @@ class ModifierApplicator {
       $display_uri = $this->getDisplayUri();
       if ($display_uri) update_subdomain($db, $raw_subdomain, $display_uri);
     }
-    
+    */
   }
 
   public function getDisplayUri() {
@@ -415,18 +427,31 @@ class ModifierApplicator {
         $test_modifier = new $modifier($param, $this->raw_subdomain);
 
         if ($test_modifier->isValid() && (($display_only && $test_modifier->modifiesDisplay()) || !$display_only)) {
+
+          $this->mergeJsIncludes($test_modifier->getJsIncludes());
           $this->css_additions .= $test_modifier->getCssAdditions();
           $this->opening_tags .= $test_modifier->getOpeningTags();
           $this->closing_tags .= $test_modifier->getClosingTags();
           $this->subdomain = $test_modifier->getModifiedText($this->subdomain);
           $test_modifier->modifyDb($this->_db, $this->raw_subdomain);
           array_push($valid_modifiers, $test_modifier);          
+
         }
       }
     }
     
     return $valid_modifiers;
   }  
+
+  public function mergeJsIncludes($includes) {
+    foreach ($includes as $js) {
+      $this->js_includes[$js] = true;
+    }
+  }
+
+  public function getJsIncludes() {
+    return array_keys($this->js_includes);
+  }
 
   public function useDefaultParams() {
     foreach ($this->valid_modifiers as $modifier) {
@@ -469,6 +494,7 @@ class HelpGenerator {
 $registered_modifiers = array('UnboldeningModifier',
                               'EmphasisModifier',
                               'GraphVizModifier',
+                              'FadeInModifier',
                               'UppercaseModifier',
                               'NoMarginModifier',
                               'BGModifier',
@@ -486,6 +512,8 @@ $registered_modifiers = array('UnboldeningModifier',
                               'OmgWhyModifier',
                               'Rot13Modifier',
                               'TranslatePunctuationModifier',
+                              'ApproachModifier',
+                              'TypeModifier',
                               'OlTimeyModifier');
 
 

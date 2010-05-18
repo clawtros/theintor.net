@@ -7,7 +7,7 @@ $subdomain = get_raw_subdomain();
 $title = str_replace('-',' ',$server_name[0]);
 $db = get_db();
 $ma = new ModifierApplicator($subdomain, $registered_modifiers, $_SERVER['REQUEST_URI'], $db);
-
+$modified_subdomain = $ma->getModifiedSubdomain();
 hit_subdomain($db, $ma->raw_subdomain);
 
    ?><!doctype html>
@@ -16,6 +16,17 @@ hit_subdomain($db, $ma->raw_subdomain);
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="/theintornet.css" />
     <title><?php echo $title ?></title>
+
+    <?php if ($ma->getJsIncludes()): ?>
+    <script type="text/javascript">
+      var phrase = "<?php echo $modified_subdomain; ?>";
+      
+    </script>
+    <?php endif; ?> 
+    <?php foreach ($ma->getJsIncludes() as $js_file): ?>
+    <script type="text/javascript" src="/js/<?php echo $js_file ?>.js"></script>
+    <?php endforeach; ?>
+
     <style type="text/css">
       <?php echo $ma->css_additions; ?>
     </style>
@@ -37,7 +48,7 @@ hit_subdomain($db, $ma->raw_subdomain);
 </script>
     <div id="where_things_go">
       <?php if ($subdomain): ?>
-      <h1 class="phrase"><?php echo $ma->getModifiedSubdomain(); ?></h1>
+      <h1 class="phrase" id="phrase"><?php echo $modified_subdomain; ?></h1>
       <?php else: ?>
       <h1 class="frontpage phrase" style="margin-top:0px;">THE INTOR.NET - LAST 25 CONNECTIONS - <a href="/about/">ABOUT</a></h1>
       <img src="http://<?php echo $_SERVER['SERVER_NAME'] ?>/gv.php?l=30&sa=t">
