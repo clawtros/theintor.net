@@ -290,6 +290,14 @@ class FGModifier extends Modifier {
 }
 
 
+class B64Modifier extends Modifier {
+  protected $ereg = "/^b64$/";
+  protected $modifies_display = false;
+  public function getModifiedText($text) {
+    return base64_encode($text);
+  }
+}
+
 class MatrixModifier extends Modifier {
   protected $ereg = "/^mx$/";
   protected $opening_tag = '';

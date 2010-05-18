@@ -123,6 +123,25 @@ function fetch_subdomain( $db, $subdomain ) {
   return $result;
 }
 
+function fetch_subdomain_by_id( $db, $id ) {
+  $stmt = mysqli_prepare($db, "select subdomain, hits, time_created, last_view, request_uri from urls where id = ?");
+  mysqli_stmt_bind_param($stmt, 's', $id);
+  mysqli_stmt_bind_result($stmt, $sd, $hits, $time_created, $last_view, $request_uri);
+  $result = NULL;
+  mysqli_stmt_execute($stmt);
+  while (mysqli_stmt_fetch($stmt)) {
+    $result = array('subdomain'=>$sd, 
+                    'hits'=>$hits, 
+                    'time_created'=>$time_created, 
+                    'last_view'=>$last_view, 
+                    'request_uri'=>$request_uri
+                    );
+  }
+  mysqli_stmt_free_result($stmt);
+  mysqli_stmt_close($stmt);
+  return $result;
+}
+
 
 /**
  * increments hit count and last viewed on a given subdomain
