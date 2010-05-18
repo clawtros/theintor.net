@@ -5,6 +5,7 @@ include( 'scripts/classes.php' );
 $server_name = explode('.',idn_to_utf8($_SERVER['SERVER_NAME']));
 $subdomain = get_raw_subdomain();
 $title = str_replace('-',' ',$server_name[0]);
+
 $db = get_db();
 $ma = new ModifierApplicator($subdomain, $registered_modifiers, $_SERVER['REQUEST_URI'], $db);
 $modified_subdomain = $ma->getModifiedSubdomain();
@@ -49,6 +50,7 @@ hit_subdomain($db, $ma->raw_subdomain);
     <div id="where_things_go">
       <?php if ($subdomain): ?>
       <h1 class="phrase" id="phrase"><?php echo $modified_subdomain; ?></h1>
+      <?php echo $ma->post_closing_html; ?>
       <?php else: ?>
       <h1 class="frontpage phrase" style="margin-top:0px;">THE INTOR.NET - LAST 25 CONNECTIONS - <a href="/about/">ABOUT</a></h1>
       <img src="http://<?php echo $_SERVER['SERVER_NAME'] ?>/gv.php?l=30&sa=t">

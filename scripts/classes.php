@@ -29,6 +29,8 @@ abstract class Modifier {
     return $this->modifies_display;
   }
 
+  public function getPostClosingTags() {}
+
   public function getJsIncludes() {
     return $this->js_includes;
   }
@@ -137,7 +139,7 @@ class ShowRelationshipsModifier extends Modifier {
   protected $help_text = "Show relationships to other URLs";
   protected $modifies_display = false;
 
-  public function getClosingTags() {
+  public function getPostClosingTags() {
     $result = "";
     $db = get_db();
     $stmt = mysqli_prepare($db, "SELECT responder, target, last_reply_time FROM response_lookup WHERE responder = ? OR target = ?");
@@ -165,7 +167,7 @@ class GraphVizModifier extends Modifier {
   protected $help_text = "Renders a graph of relationships";
   protected $modifies_display = false;
 
-  public function getClosingTags() {
+  public function getPostClosingTags() {
     return '<img src="http://'.$_SERVER['SERVER_NAME'].'/gv.php?l=13" alt="graph viz" class="graphviz_image" />';
   }
 }
@@ -369,6 +371,7 @@ class ModifierApplicator {
   public $subdomain;
   public $raw_subdomain;
   public $db_record = array();
+  public $post_closing_html;
   public $js_includes = array(); 
   private $_db;
 
@@ -430,6 +433,7 @@ class ModifierApplicator {
         if ($test_modifier->isValid() && (($display_only && $test_modifier->modifiesDisplay()) || !$display_only)) {
 
           $this->mergeJsIncludes($test_modifier->getJsIncludes());
+          $this->post_closing_html .= $test_modifier->getPostClosingTags();
           $this->css_additions .= $test_modifier->getCssAdditions();
           $this->opening_tags .= $test_modifier->getOpeningTags();
           $this->closing_tags .= $test_modifier->getClosingTags();
