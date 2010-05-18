@@ -7,7 +7,7 @@ $server_name = explode('.',idn_to_utf8($_SERVER['SERVER_NAME']));
 if ($server_name[0] == '_') {
    $reqs = explode('/',$_SERVER['REQUEST_URI']);
    $d = base64_decode($reqs[1]);
-   $domain = fetch_subdomain($db, $d);
+   $domain = fetch_subdomain_by_id($db, $d);
    header("Location: http://".$domain['subdomain'].".theintor.net/");
 }
 $subdomain = get_raw_subdomain();
@@ -71,5 +71,5 @@ hit_subdomain($db, $ma->raw_subdomain);
     </div>
   </body>
   <!-- part of Adam Benzan's Internet Conglomerate - http://blog.removablefeast.com/ http://cruciverbalizer.com/ adam[dot]benzan[at]gmail[dot]com-->
-  <!-- Obfuscated URL at: http://_.theintor.net/<?php echo base64_encode($ma->raw_subdomain); ?>  -->
+  <!-- Obfuscated URL at: http://_.theintor.net/<?php echo base64_encode($ma->db_record['id']); ?>  -->
 </html>

@@ -105,13 +105,14 @@ function add_subdomain( $db, $subdomain, $response_to="" ) {
 }
 
 function fetch_subdomain( $db, $subdomain ) {
-  $stmt = mysqli_prepare($db, "select subdomain, hits, time_created, last_view, request_uri from urls where subdomain = ?");
+  $stmt = mysqli_prepare($db, "select id, subdomain, hits, time_created, last_view, request_uri from urls where subdomain = ?");
   mysqli_stmt_bind_param($stmt, 's', $subdomain);
-  mysqli_stmt_bind_result($stmt, $sd, $hits, $time_created, $last_view, $request_uri);
+  mysqli_stmt_bind_result($stmt, $id, $sd, $hits, $time_created, $last_view, $request_uri);
   $result = NULL;
   mysqli_stmt_execute($stmt);
   while (mysqli_stmt_fetch($stmt)) {
-    $result = array('subdomain'=>$subdomain, 
+    $result = array('id'=>$id,  
+                    'subdomain'=>$subdomain, 
                     'hits'=>$hits, 
                     'time_created'=>$time_created, 
                     'last_view'=>$last_view, 
