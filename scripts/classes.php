@@ -289,6 +289,16 @@ class FGModifier extends Modifier {
   }
 }
 
+
+class MatrixModifier extends Modifier {
+  protected $ereg = "/^mx$/";
+  protected $opening_tag = '';
+
+  public function getCssAdditions() {
+    return "body { font-family: courier, monospace; background-color: #000; color:#0f0 } #phrase { font-weight: normal } ";
+  }
+}
+
 class ShadowModifier extends Modifier {
   protected $ereg = "/^sh$/";
   protected $opening_tag = '';
@@ -499,6 +509,7 @@ class HelpGenerator {
 $registered_modifiers = array('UnboldeningModifier',
                               'EmphasisModifier',
                               'GraphVizModifier',
+                              'MatrixModifier',
                               'FadeInModifier',
                               'UppercaseModifier',
                               'NoMarginModifier',
