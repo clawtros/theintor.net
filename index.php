@@ -8,7 +8,10 @@ if ($server_name[0] == '_') {
    $reqs = explode('/',$_SERVER['REQUEST_URI']);
    $d = base64_decode($reqs[1]);
    $domain = fetch_subdomain_by_id($db, $d);
-   header("Location: http://".$domain['subdomain'].".theintor.net/");
+   if ($domain) {
+     header("Status: 301");
+     header("Location: http://".$domain['subdomain'].".theintor.net/");
+   }
 }
 $subdomain = get_raw_subdomain();
 $title = str_replace('-',' ',$server_name[0]);
