@@ -5,9 +5,9 @@ var destination;
 function type_character() {
     $("#typing_location").append(phrase[typing_position++]);
     if (typing_position < phrase.length) { 
-        setTimeout(type_character, Math.floor(Math.random()*500)+50);
+        setTimeout(type_character, Math.floor(Math.random()*340)+50);
     } else {
-        $("#cursor").hide();
+        //$("#cursor").hide();
     }
 }
 
@@ -21,7 +21,7 @@ function blink_cursor() {
 
 function start_typing() {
     $(destination).html('<span id="typing_location"></span><span id="cursor">|</span>');
-    setInterval(blink_cursor, 300);
+    setInterval(blink_cursor, 750);
     setTimeout(type_character, 150);
 }
 
