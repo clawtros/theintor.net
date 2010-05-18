@@ -303,7 +303,7 @@ class MatrixModifier extends Modifier {
   protected $opening_tag = '';
 
   public function getCssAdditions() {
-    return "body { font-family: courier, monospace; background-color: #000; color:#0f0 } #phrase { font-weight: normal } ";
+    return "body { font-family: courier, monospace; background-color: #000; color:#0f0 } #phrase { font-weight: normal; text-shadow:#af6 0px 0px 10px; } ";
   }
 }
 

@@ -62,8 +62,8 @@ hit_subdomain($db, $ma->raw_subdomain);
       <h1 class="phrase" id="phrase"><?php echo $modified_subdomain; ?></h1>
       <?php echo $ma->post_closing_html; ?>
       <?php else: ?>
-      <h1 class="frontpage phrase" style="margin-top:0px;">THE INTOR.NET - LAST 25 CONNECTIONS - <a href="/about/">ABOUT</a></h1>
-      <img src="http://<?php echo $_SERVER['SERVER_NAME'] ?>/gv.php?l=30&sa=t">
+      <h1 class="frontpage phrase" style="margin-top:0px;">THE INTOR.NET - <a href="/about/">ABOUT</a></h1>
+      <img src="http://<?php echo $_SERVER['SERVER_NAME'] ?>/gv.php?l=100&sa=t">
       <div class="connections">
       <?php foreach (get_last_connections($db, 25) as $connection): ?>
       <a href="http://<?php echo urldecode($connection) ?>.theintor.net/r/g/"><?php echo urldecode($connection) ?></a>

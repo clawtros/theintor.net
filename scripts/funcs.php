@@ -56,7 +56,7 @@ function get_relationships( $db, $name=null, $max_depth=2, $depth=0) {
     $stmt = mysqli_prepare($db, $sql);
     mysqli_stmt_bind_param($stmt, 'ss', $name, $name);
   } else {
-    $sql = "SELECT responder, target, last_reply_time FROM response_lookup order by last_reply_time desc";
+    $sql = "SELECT responder, target, last_reply_time FROM response_lookup inner join urls on (responder=subdomain or target=subdomain) order by last_reply_time desc";
     if ($_GET['l']) { $sql .= ' limit '.(int)$_GET['l']; }
     $stmt = mysqli_prepare($db,$sql); 
   }
