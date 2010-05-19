@@ -117,6 +117,29 @@ class OmgWhyModifier extends Modifier {
   protected $closing_tag = "</blink>";
 }
 
+class CssBackgroundGradientModifier extends Modifier {
+    protected $ereg = "/^bg[0-9a-fA-F]{6},[0-9a-fA-F]{6}$/";
+
+public function getParameters() {
+    return explode(',',substr($this->fragment, 2));
+}
+function getCssAdditions() {
+$params = $this->getParameters();
+return sprintf("
+body {
+background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(#%s),
+    to(#%s)
+);
+background: -moz-linear-gradient( top,#%s,#%s );}
+", $params[0], $params[1], $params[0], $params[1]);
+}
+}
+
+
 
 class Rot13Modifier extends Modifier {
   protected $ereg = "/^r13$/";
@@ -573,7 +596,9 @@ $registered_modifiers = array('UnboldeningModifier',
                               'ApproachModifier',
                               'CustomShadowModifier',
                               'TypeModifier',
+                              'CssBackgroundGradientModifier',
                               'RotationModifier',
                               'OlTimeyModifier');
+
 
 
