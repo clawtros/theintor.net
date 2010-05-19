@@ -4,16 +4,14 @@ include( 'scripts/funcs.php' );
 include( 'scripts/classes.php' );
 $db = get_db();
 $server_name = explode('.',idn_to_utf8($_SERVER['SERVER_NAME']));
-if ($server_name[0] == '_') {
+if ($server_name[0] == 'r') {
    $reqs = explode('/',$_SERVER['REQUEST_URI']);
    $d = base64_decode($reqs[1]);
    $domain = fetch_subdomain_by_id($db, $d);
-   if ($domain) {
-     header("Status: 301");
-     header("Location: http://".$domain['subdomain'].".theintor.net/");
-   }
+   //header("Location: http://".$domain['subdomain'].".theintor.net/");
+   if ($domain) $subdomain = $domain['subdomain']; 
 }
-$subdomain = get_raw_subdomain();
+if (!isset($subdomain)) $subdomain = get_raw_subdomain();
 $title = str_replace('-',' ',$server_name[0]);
 
 
@@ -74,5 +72,5 @@ hit_subdomain($db, $ma->raw_subdomain);
     </div>
   </body>
   <!-- part of Adam Benzan's Internet Conglomerate - http://blog.removablefeast.com/ http://cruciverbalizer.com/ adam[dot]benzan[at]gmail[dot]com-->
-  <!-- Obfuscated URL at: http://_.theintor.net/<?php echo base64_encode($ma->db_record['id']); ?>  -->
+  <!-- Obfuscated URL at: http://r.theintor.net/<?php echo base64_encode($ma->db_record['id']); ?>  -->
 </html>
