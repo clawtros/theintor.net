@@ -8,7 +8,6 @@ var to_typing_array = function(p) {
   var storage = [];
   for (var i in phrase) {
       var character = phrase[i];
-      //console.log();
       if (!character.match(/[\<\&]/) && storage.length == 0) {
           result.push(phrase[i]);
       } else {
