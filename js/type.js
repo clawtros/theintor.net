@@ -9,14 +9,14 @@ var to_typing_array = function(p) {
   for (var i in phrase) {
       var character = phrase[i];
       //console.log();
-      if (character.match(/[a-zA-Z]/) && storage.length == 0) {
+      if (!character.match(/[\<\&]/) && storage.length == 0) {
           result.push(phrase[i]);
       } else {
           storage.push(character);
           if (character.match(/[\>\;]/)) {
               result.push(storage.join(""));
               storage = [];
-          } 
+          }
       }
   }
   
