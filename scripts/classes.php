@@ -207,14 +207,14 @@ class RespondsToModifier extends Modifier {
   public function modifyDb() {
     $db = get_db();
     $params = $this->getParameters();
-    $target = utf8_encode($params[0]);
-
-    $stmt = mysqli_prepare($db, "REPLACE INTO response_lookup (responder, target, last_reply_time) VALUES (?, ?, NOW())");
-    mysqli_stmt_bind_param($stmt, 'ss', $this->subdomain, strtolower(urlencode($target)));
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_free_result($stmt);
-    mysqli_stmt_close($stmt);  
-    
+    $target = utf8_encode(preg_replace('/[\:\&\<\>\[\]\+\(\)\\\'\"\;\/\?\*]/','',strtolower($params[0])));
+    if ($target) {
+        $stmt = mysqli_prepare($db, "REPLACE INTO response_lookup (responder, target, last_reply_time) VALUES (?, ?, NOW())");
+        mysqli_stmt_bind_param($stmt, 'ss', $this->subdomain, $target);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_free_result($stmt);
+        mysqli_stmt_close($stmt);
+    }
   }
 }
 
