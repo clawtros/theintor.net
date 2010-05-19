@@ -44,7 +44,7 @@ abstract class Modifier {
   public function getRegexp() {
     $translations = array('/' => '',
                           '\d+' => ' followed by numbers',
-                          '[0-9a-zA-Z]{6}' => ' followed by 6 digit hexadecimal code',
+                          '[0-9a-fA-F]{6}' => ' followed by 6 digit hexadecimal code',
                           '.*' => ' followed by any (non-slash) characters',
                           '^' => '',
                           '$' => '');
@@ -56,7 +56,7 @@ abstract class Modifier {
     $translations = array('/' => '',
                           '\d+' => rand(1,80),
                           '.*' => 'hello-world',
-                          '[0-9a-zA-Z]{6}' => randcolor(),
+                          '[0-9a-fA-F]{6}' => randcolor(),
                           '^' => '',
                           '$' => '');
                           
@@ -280,7 +280,7 @@ class GlowModifier extends Modifier {
 
 
 class BGModifier extends Modifier {
-  protected $ereg = "/^bg[0-9a-zA-Z]{6}$/";
+  protected $ereg = "/^bg[0-9a-fA-F]{6}$/";
   protected $help_text = "Alters background-color";
   public function getParameters() {
     return array(substr($this->fragment, 2));
@@ -295,7 +295,7 @@ class BGModifier extends Modifier {
 
 
 class FGModifier extends Modifier {
-  protected $ereg = "/^c[0-9a-zA-Z]{6}$/";
+  protected $ereg = "/^c[0-9a-fA-F]{6}$/";
   protected $help_text = "Alters text color";
   public function getParameters() {
     return array(substr($this->fragment, 1));
@@ -336,6 +336,21 @@ class ShadowModifier extends Modifier {
   }
 }
 
+class CustomShadowModifier extends Modifier {
+  protected $ereg = "/^sh[0-9a-fA-F]{6}$/";
+  protected $opening_tag = '';
+  protected $help_text = "Applies a drop shadow with custom colour";
+
+
+  public function getParameters() {
+    return array(substr($this->fragment, 2));
+  }
+  
+  public function getCssAdditions() {
+    $params = $this->getParameters();
+    return ".phrase { text-shadow: #".$params[0]." 10px 10px 0px }";
+  }
+}
 class EmphasisModifier extends Modifier {
   protected $ereg = "/^i$/";
   protected $opening_tag = "<em>";
@@ -556,6 +571,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'Rot13Modifier',
                               'TranslatePunctuationModifier',
                               'ApproachModifier',
+                              'CustomShadowModifier',
                               'TypeModifier',
                               'RotationModifier',
                               'OlTimeyModifier');
