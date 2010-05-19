@@ -1,9 +1,32 @@
 var typing_position = 0;
 var blink_interval;
 var destination;
+var typing_array = [];
+
+var to_typing_array = function(p) {
+  var result = [];
+  var storage = [];
+  for (var i in phrase) {
+      var character = phrase[i];
+      //console.log();
+      if (character.match(/[a-zA-Z]/) && storage.length == 0) {
+          result.push(phrase[i]);
+      } else {
+          storage.push(character);
+          if (character.match(/[\>\;]/)) {
+              result.push(storage.join(""));
+              storage = [];
+          } 
+      }
+  }
+  
+  return result;
+}
+
+typing_array = to_typing_array(phrase);
 
 function type_character() {
-    $("#typing_location").append(phrase[typing_position++]);
+    $("#typing_location").html(typing_array.slice(0,typing_position++).join(""));
     if (typing_position < phrase.length) { 
         setTimeout(type_character, Math.floor(Math.random()*340)+50);
     } else {
