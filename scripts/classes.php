@@ -232,6 +232,25 @@ class UppercaseModifier extends Modifier {
   }
 }
 
+
+
+class RotationModifier extends Modifier {
+  protected $ereg = "/^ro\d+/";
+  protected $help_text = "rotates";
+  public function getParameters() {
+    return array(substr($this->fragment, 2));
+  }
+
+  public function getCssAdditions() {
+    $parameters = $this->getParameters();
+    return sprintf( "
+#phrase { 
+-moz-transform:rotate(%ddeg);
+-webkit-transform:rotate(%ddeg); }
+", $parameters[0], $parameters[0]  );
+  }
+}
+
 class SizeModifier extends Modifier {
   protected $ereg = "/^s\d+/";
   protected $help_text = "Changes font size to numbers specified (in pixels)";
@@ -538,6 +557,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'TranslatePunctuationModifier',
                               'ApproachModifier',
                               'TypeModifier',
+                              'RotationModifier',
                               'OlTimeyModifier');
 
 
