@@ -26,7 +26,7 @@ typing_array = to_typing_array(phrase);
 
 function type_character() {
     $("#typing_location").html(typing_array.slice(0,typing_position++).join(""));
-    if (typing_position < phrase.length) { 
+    if (typing_position <= typing_array.length) { 
         setTimeout(type_character, Math.floor(Math.random()*340)+50);
     } else {
         //$("#cursor").hide();
