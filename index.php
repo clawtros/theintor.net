@@ -15,9 +15,9 @@ if (!isset($subdomain)) $subdomain = get_raw_subdomain();
 $title = str_replace('-',' ',$server_name[0]);
 
 
+hit_subdomain($db, $subdomain);
 $ma = new ModifierApplicator($subdomain, $registered_modifiers, $_SERVER['REQUEST_URI'], $db);
 $modified_subdomain = $ma->getModifiedSubdomain();
-hit_subdomain($db, $ma->raw_subdomain);
 
    ?><!doctype html>
 <html>
