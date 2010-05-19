@@ -108,6 +108,9 @@ class TranslatePunctuationModifier extends Modifier {
       'omgomg'=>'!!!!!');
     return str_replace(array_keys($translations), array_values($translations), $text);
   }
+    public function getSample() {
+        return "http://sample_s-messagebang-interrobang-questionmarkomgomg.theintor.net/p";
+    }
 }
 
 class OmgWhyModifier extends Modifier {
@@ -123,7 +126,12 @@ class CssBackgroundGradientModifier extends Modifier {
 public function getParameters() {
     return explode(',',substr($this->fragment, 2));
 }
-function getCssAdditions() {
+
+public function getSample() {
+    return "http://sample-message.theintor.net/bg".randcolor().",".randcolor();
+}
+
+public function getCssAdditions() {
 $params = $this->getParameters();
 return sprintf("
 body {
