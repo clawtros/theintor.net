@@ -26,7 +26,7 @@ $help = new HelpGenerator($registered_modifiers);
 
 </script>
     <div id="about_content">
-      <h1>The Intor.Net - A Helpful Guide</h1>
+      <h1>The Intor.Net - A Helpful Guide - <a href="/changes/">Changes</a> - <a href="/">Index</a></h1>
       <p>This app formats bits of text that are specified in a URL (anything before ".theintor.net") and modifies it based on whatever follows that URL (anything after ".theintor.net").</p>
       <p>This is some automated documentation generated from the modifier classes for URLs.  As such, it might be a little weird.</p>
       <p>
