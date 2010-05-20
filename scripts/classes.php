@@ -413,7 +413,52 @@ class CodifyModifier extends Modifier {
   }
 }
 
+function split_channels($hex_color) {
+  $r = base_convert(substr($hex_color, 0, 2), 16, 10);
+  $g = base_convert(substr($hex_color, 2, 2), 16, 10);
+  $b = base_convert(substr($hex_color, 4, 2), 16, 10);
+  
+  return array($r, $g, $b);
+}
 
+function join_channels($channels) {
+  $result = "";
+  foreach ($channels as $channel) {
+    $hex_channel = base_convert($channel, 10, 16);
+    if (strlen($hex_channel) == 1) $result .= "0";
+    $result .= $hex_channel;
+  }
+  return $result;
+}
+
+class LetterGradientModifier extends Modifier {
+  protected $ereg = "/^lg[0-9a-fA-F]{6},[0-9a-fA-F]{6}$/";
+  protected $help_text = "Per-letter gradient using spans that might break everything";
+
+  public function getParameters() {
+    return explode(',',substr($this->fragment, 2));
+  }
+  
+  public function getModifiedText($text) {
+    $text = htmlspecialchars_decode($text);
+    $textlength = strlen($text);
+    
+    list($from, $to) = $this->getParameters();
+    list($from_r, $from_g, $from_b) = split_channels($from);
+    list($to_r, $to_g, $to_b) = split_channels($to);
+    
+    $dr = ($from_r - $to_r) / $textlength;
+    $dg = ($from_g - $to_g) / $textlength;
+    $db = ($from_b - $to_b) / $textlength;
+    $result = "";
+    for ($i = 0; $i < strlen($text); $i++) {
+      $result .= sprintf("<span style=\"color:rgb(%d,%d,%d)\">%s</span>", $from_r - $dr*$i, $from_g - $dg*$i, $from_b - $db*$i, $text[$i]);
+    }
+
+    return $result;
+  }
+
+}
 
 class BinaryModifier extends Modifier {
   protected $ereg = "/^1101$/";
@@ -605,6 +650,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'CustomShadowModifier',
                               'TypeModifier',
                               'CssBackgroundGradientModifier',
+                              'LetterGradientModifier',
                               'RotationModifier',
                               'OlTimeyModifier');
 
