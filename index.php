@@ -28,7 +28,7 @@ $modified_subdomain = $ma->getModifiedSubdomain();
 
     <?php if ($ma->getJsIncludes()): ?>
     <script type="text/javascript">
-      var phrase = "<?php echo $modified_subdomain; ?>";
+      var phrase = "<?php echo addslashes($modified_subdomain); ?>";
       
     </script>
     <?php endif; ?> 

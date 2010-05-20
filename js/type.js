@@ -27,7 +27,11 @@ typing_array = to_typing_array(phrase);
 function type_character() {
     $("#typing_location").html(typing_array.slice(0,typing_position++).join(""));
     if (typing_position <= typing_array.length) { 
-        setTimeout(type_character, Math.floor(Math.random()*340)+50);
+        if (typing_array[typing_position-1].length > 1) {
+            type_character();
+        } else {
+            setTimeout(type_character, Math.floor(Math.random()*340)+50);
+        }
     } else {
         //$("#cursor").hide();
     }
