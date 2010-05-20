@@ -482,7 +482,7 @@ public function getSample() {
 
 class GoogleFontModifier extends Modifier {
   protected $ereg = "/^f\d+$/";
-  public $_fontNames = array('Cantarell', 'Crimson Text', 'Droid Sans', 'Droid Sans Mono', 'Droid Serif', 'IM Fell', 'Inconsolata', 'Josefin Sans Std Light', 'Lobster', 'Molengo', 'Nobile', 'OFL Sorts Mill Goudy TT', 'Old Standard TT', 'Reenie Beanie', 'Tangerine', 'Vollkorn', 'Yanone Kaffeesatz');
+  public $_fontNames = array('Cantarell', 'Crimson Text', 'Droid Sans', 'Droid Sans Mono', 'Droid Serif', 'IM Fell DW Pica', 'Inconsolata', 'Josefin Sans Std Light', 'Lobster', 'Molengo', 'Nobile', 'OFL Sorts Mill Goudy TT', 'Old Standard TT', 'Reenie Beanie', 'Tangerine', 'Vollkorn', 'Yanone Kaffeesatz');
 
   public function getHelpText() {
     $result = "Switches body font to one from the google webfonts API:<small>  ";
