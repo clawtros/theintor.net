@@ -451,8 +451,18 @@ class LetterGradientModifier extends Modifier {
     $dg = ($from_g - $to_g) / $textlength;
     $db = ($from_b - $to_b) / $textlength;
     $result = "";
+    $storage = "";
     for ($i = 0; $i < strlen($text); $i++) {
-      $result .= sprintf("<span style=\"color:rgb(%d,%d,%d)\">%s</span>", $from_r - $dr*$i, $from_g - $dg*$i, $from_b - $db*$i, $text[$i]);
+      $chr = $text[$i];
+      if (!preg_match("/[\<\&]/",$text[$i]) && strlen($storage) == 0) {
+          $result .= sprintf("<span style=\"color:rgb(%d,%d,%d)\">%s</span>", $from_r - $dr*$i, $from_g - $dg*$i, $from_b - $db*$i, $chr);
+      } else {
+        $storage .= $chr;
+        if (preg_match("/[\>\;]/", $chr)) {
+          $result .= $storage;
+          $storage = "";
+        }
+      }
     }
 
     return $result;
