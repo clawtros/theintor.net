@@ -25,11 +25,10 @@ $modified_subdomain = $ma->getModifiedSubdomain();
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="/theintornet.css" />
     <title><?php echo $title ?></title>
-
+    <?php echo $ma->getHeaderAdditions(); ?> 
     <?php if ($ma->getJsIncludes()): ?>
     <script type="text/javascript">
       var phrase = "<?php echo addslashes($modified_subdomain); ?>";
-      
     </script>
     <?php endif; ?> 
     <?php foreach ($ma->getJsIncludes() as $js_file): ?>

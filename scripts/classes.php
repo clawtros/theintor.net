@@ -19,6 +19,7 @@ abstract class Modifier {
   protected $css_additions = "";
   protected $help_text = "None yet";
   protected $js_includes = array();
+  protected $header_additions = "";
 
   public function Modifier($fragment, $subdomain) {
     $this->fragment = $fragment;
@@ -29,6 +30,8 @@ abstract class Modifier {
     return $this->modifies_display;
   }
 
+  public function getPreOpeningTags() {}
+
   public function getPostClosingTags() {}
 
   public function getJsIncludes() {
@@ -37,6 +40,10 @@ abstract class Modifier {
 
   public function getOrder() {
     return $this->order;
+  }
+
+  public function getHeaderAdditions() {
+    return $this->header_additions;
   }
 
   public function modifyDb($db) { }
@@ -473,6 +480,46 @@ public function getSample() {
 
 }
 
+class GoogleFontModifier extends Modifier {
+  protected $ereg = "/^f\d+$/";
+  public $_fontNames = array('Cantarell', 'Crimson Text', 'Droid Sans', 'Droid Sans Mono', 'Droid Serif', 'IM Fell', 'Inconsolata', 'Josefin Sans Std Light', 'Lobster', 'Molengo', 'Nobile', 'OFL Sorts Mill Goudy TT', 'Old Standard TT', 'Reenie Beanie', 'Tangerine', 'Vollkorn', 'Yanone Kaffeesatz');
+
+  public function getHelpText() {
+    $result = "Switches body font to one from the google webfonts API:<small>  ";
+    foreach ($this->_fontNames as $id=>$font) {
+      $result .= $id.':'.$font.', ';
+    }
+    $result = substr($result, 0, -1);
+    $result .= "</small>";
+    return $result;
+  }
+
+  public function getSample() {
+    
+    return "http://the-quick-brown-fox-jumped-over-the-lazy-dog.theintor.net/f".rand(0,sizeof($this->_fontNames)-1);
+  }
+
+  public function getParameters() {
+    $id = (int)substr($this->fragment, 1);
+    if ($id > sizeof($this->_fontNames)) {
+      $font = 'Tangerine';
+    } else {
+      $font = $this->_fontNames[$id];
+    }
+    return array($font);
+  }
+
+  public function getHeaderAdditions() {
+    $params = $this->getParameters();
+    return "<link href='http://fonts.googleapis.com/css?family=".$params[0]."' rel='stylesheet' type='text/css'>";
+  }
+
+  public function getCssAdditions() {
+    $params = $this->getParameters();
+    return 'body { font-family: "'.$params[0].'" }';
+  }
+}
+
 class BinaryModifier extends Modifier {
   protected $ereg = "/^1101$/";
   protected $help_text = "Converts text to binary representation of ascii values";
@@ -514,6 +561,8 @@ class ModifierApplicator {
   public $db_record = array();
   public $post_closing_html;
   public $js_includes = array(); 
+  public $pre_opening_html = "";
+  private $header_additions = "";
   private $_db;
 
   public function getTitle() {
@@ -547,6 +596,10 @@ class ModifierApplicator {
 
   }
 
+  public function getHeaderAdditions() {
+    return $this->header_additions;
+  }
+
   public function getDisplayUri() {
     $result = array();
     foreach ($this->valid_modifiers as $modifier) {
@@ -574,6 +627,8 @@ class ModifierApplicator {
         if ($test_modifier->isValid() && (($display_only && $test_modifier->modifiesDisplay()) || !$display_only)) {
 
           $this->mergeJsIncludes($test_modifier->getJsIncludes());
+          $this->header_additions .= $test_modifier->getHeaderAdditions();
+          $this->pre_opening_html .= $test_modifier->getPreOpeningTags();
           $this->post_closing_html .= $test_modifier->getPostClosingTags();
           $this->css_additions .= $test_modifier->getCssAdditions();
           $this->opening_tags .= $test_modifier->getOpeningTags();
@@ -664,6 +719,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'TypeModifier',
                               'CssBackgroundGradientModifier',
                               'LetterGradientModifier',
+                              'GoogleFontModifier',
                               'RotationModifier',
                               'OlTimeyModifier');
 
