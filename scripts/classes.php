@@ -435,6 +435,9 @@ class LetterGradientModifier extends Modifier {
   protected $ereg = "/^lg[0-9a-fA-F]{6},[0-9a-fA-F]{6}$/";
   protected $help_text = "Per-letter gradient using spans that might break everything";
 
+public function getSample() {
+    return "http://sample-message.theintor.net/lg".randcolor().",".randcolor();
+}
   public function getParameters() {
     return explode(',',substr($this->fragment, 2));
   }
