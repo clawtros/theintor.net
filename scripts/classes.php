@@ -438,20 +438,43 @@ function join_channels($channels) {
   return $result;
 }
 
+function string_to_entities($text) {
+  $entities = array();
+  $storage = "";
+  for ($i = 0; $i < strlen($text); $i++) {
+    $chr = $text[$i];
+    if (!preg_match("/[\<\&]/",$chr) && strlen($storage) == 0) {
+      array_push($entities, $chr);
+    } else {
+      $storage .= $chr;
+      if (preg_match("/[\>\;]/", $chr)) {
+        array_push($entities, $storage);
+        $storage = "";
+      }
+    }
+  }
+  
+  return $entities;
+  
+}
+
 class LetterGradientModifier extends Modifier {
   protected $ereg = "/^lg[0-9a-fA-F]{6},[0-9a-fA-F]{6}$/";
   protected $help_text = "Per-letter gradient using spans that might break everything";
 
-public function getSample() {
+  public function getSample() {
     return "http://sample-message.theintor.net/lg".randcolor().",".randcolor();
-}
+  }
+
   public function getParameters() {
     return explode(',',substr($this->fragment, 2));
   }
   
   public function getModifiedText($text) {
     $text = htmlspecialchars_decode($text);
-    $textlength = strlen($text);
+    $entities = string_to_entities($text);
+    $textlength = sizeof($entities);
+    
     
     list($from, $to) = $this->getParameters();
     list($from_r, $from_g, $from_b) = split_channels($from);
@@ -460,19 +483,15 @@ public function getSample() {
     $dr = ($from_r - $to_r) / $textlength;
     $dg = ($from_g - $to_g) / $textlength;
     $db = ($from_b - $to_b) / $textlength;
+
     $result = "";
-    $storage = "";
-    for ($i = 0; $i < strlen($text); $i++) {
-      $chr = $text[$i];
-      if (!preg_match("/[\<\&]/",$text[$i]) && strlen($storage) == 0) {
-          $result .= sprintf("<span style=\"color:rgb(%d,%d,%d)\">%s</span>", $from_r - $dr*$i, $from_g - $dg*$i, $from_b - $db*$i, $chr);
-      } else {
-        $storage .= $chr;
-        if (preg_match("/[\>\;]/", $chr)) {
-          $result .= $storage;
-          $storage = "";
-        }
-      }
+    $i = 0;
+    foreach ($entities as $entity) {
+      $i++;
+      $result .= preg_match("/^\</", $entity) ? 
+        $entity :
+        sprintf("<span style=\"color:rgb(%d,%d,%d)\">%s</span>", 
+                $from_r - $dr*$i, $from_g - $dg*$i, $from_b - $db*$i, $entity);
     }
 
     return $result;
