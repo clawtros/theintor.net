@@ -501,7 +501,11 @@ class LetterGradientModifier extends Modifier {
 
 class GoogleFontModifier extends Modifier {
   protected $ereg = "/^f\d+$/";
-  public $_fontNames = array('Cantarell', 'Crimson Text', 'Droid Sans', 'Droid Sans Mono', 'Droid Serif', 'IM Fell DW Pica', 'Inconsolata', 'Josefin Sans Std Light', 'Lobster', 'Molengo', 'Nobile', 'OFL Sorts Mill Goudy TT', 'Old Standard TT', 'Reenie Beanie', 'Tangerine', 'Vollkorn', 'Yanone Kaffeesatz');
+  public $_fontNames = array('Cantarell', 
+                             'Crimson Text', 
+                             'Droid Sans', 
+                             'Droid Sans Mono', 
+                             'Droid Serif', 'IM Fell DW Pica', 'Inconsolata', 'Josefin Sans Std Light', 'Lobster', 'Molengo', 'Nobile', 'OFL Sorts Mill Goudy TT', 'Old Standard TT', 'Reenie Beanie', 'Tangerine', 'Vollkorn', 'Yanone Kaffeesatz');
 
   public function getHelpText() {
     $result = "Switches body font to one from the google webfonts API:<small>  ";
@@ -513,8 +517,7 @@ class GoogleFontModifier extends Modifier {
     return $result;
   }
 
-  public function getSample() {
-    
+  public function getSample() {    
     return "http://the-quick-brown-fox-jumped-over-the-lazy-dog.theintor.net/f".rand(0,sizeof($this->_fontNames)-1);
   }
 
@@ -537,9 +540,22 @@ class GoogleFontModifier extends Modifier {
     $params = $this->getParameters();
     return 'body { font-family: "'.$params[0].'" }';
   }
+
+}
+
+
+class TitleCaseModifier extends Modifier {
+
+  protected $ereg = "/^tc$/";
+  protected $help_text = "Title-cases text";
+  
+  public function getModifiedText($text) {
+    return mb_convert_case($text, MB_CASE_TITLE, "UTF-8");
+  }
 }
 
 class BinaryModifier extends Modifier {
+
   protected $ereg = "/^1101$/";
   protected $help_text = "Converts text to binary representation of ascii values";
   
@@ -739,6 +755,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'CssBackgroundGradientModifier',
                               'LetterGradientModifier',
                               'GoogleFontModifier',
+                              'TitleCaseModifier',
                               'RotationModifier',
                               'OlTimeyModifier');
 
