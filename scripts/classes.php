@@ -172,6 +172,21 @@ class MarqueeModifier extends Modifier {
 
 }
 
+
+class DunDunModifier extends Modifier {
+  protected $ereg = "/^dundun$/";
+  protected $help_text = "Dun dun";
+  protected $modifies_display = false;
+
+  public function getPostClosingTags() {
+    return '<object width="0" height="0">
+<param name="movie" value="/doinkdoink.swf">
+<embed src="/doinkdoink.swf" width="0" height="0">
+</embed>
+</object>';
+  }
+}
+
 class ShowRelationshipsModifier extends Modifier {
   protected $ereg = "/^r$/";
   protected $help_text = "Show relationships to other URLs";
@@ -731,6 +746,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'EmphasisModifier',
                               'GraphVizModifier',
                               'MatrixModifier',
+                              'DunDunModifier',
                               'FadeInModifier',
                               'UppercaseModifier',
                               'NoMarginModifier',
