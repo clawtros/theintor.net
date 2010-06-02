@@ -103,14 +103,20 @@ class UnboldeningModifier extends Modifier {
   protected $help_text = "Switches to normal font-weight";
 }
 
+class MessageModifier extends Modifier {
+  protected $ereg = "/^\"\(.*\)\"$/";
+  protected $help_text = "";
+}
+
 class TranslatePunctuationModifier extends Modifier {
   protected $ereg = "/^p$/";
   protected $help_text = "Translates certain strings in urls to punctuation (period, bang, questionmark, interrobang, omgomg)";
   public function getModifiedText($text) {
     $translations = array('period'=>'.',
       'interrobang'=>'&#8253;',
-      '_'=>'&lsquo;',
+      '_'=>'&rsquo;',
       'bang'=>'!',
+      'comma'=>',',
       'questionmark'=>'?',
       'omgomg'=>'!!!!!');
     return str_replace(array_keys($translations), array_values($translations), $text);
