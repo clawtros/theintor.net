@@ -1,5 +1,39 @@
 <?php
 
+$registered_modifiers = array('UnboldeningModifier',
+                              'MessageModifier',
+                              'EmphasisModifier',
+                              'GraphVizModifier',
+                              'MatrixModifier',
+                              'DunDunModifier',
+                              'FadeInModifier',
+                              'UppercaseModifier',
+                              'NoMarginModifier',
+                              'BGModifier',
+                              'ShowRelationshipsModifier',
+                              'FGModifier',
+                              'SizeModifier',
+                              'MarqueeModifier',
+                              'RespondsToModifier',
+                              'SerifModifier',
+                              'CodifyModifier',
+                              'GlowModifier',
+                              'ShadowModifier',
+                              'RemoveResponseModifier',
+                              'BinaryModifier',
+                              'OmgWhyModifier',
+                              'Rot13Modifier',
+                              'TranslatePunctuationModifier',
+                              'ApproachModifier',
+                              'CustomShadowModifier',
+                              'TypeModifier',
+                              'CssBackgroundGradientModifier',
+                              'LetterGradientModifier',
+                              'GoogleFontModifier',
+                              'TitleCaseModifier',
+                              'RotationModifier',
+                              'OlTimeyModifier');
+
 function randcolor() {
   $result = "";
   foreach (range(1,3) as $i) {
@@ -93,7 +127,9 @@ abstract class Modifier {
     return preg_match($this->ereg, $this->fragment);
   }
   public function getParameters() {
-    return array();
+    $result = array();
+    preg_match_all($this->ereg, $this->fragment, $result);
+    return $result;
   }
 }
 
@@ -104,8 +140,33 @@ class UnboldeningModifier extends Modifier {
 }
 
 class MessageModifier extends Modifier {
-  protected $ereg = "/^\"\(.*\)\"$/";
+  protected $ereg = "/^q(.*)/";
   protected $help_text = "";
+  protected $_db = NULL;
+  protected $modifies_display = true;
+
+  public function modifyDb($db, $sd) {
+    $this->_db = $db;
+  }
+
+  public function getModifiedText($text) {
+    global $registered_modifiers;
+
+    $parameters = $this->getParameters();
+
+    $rs = explode('/',$_SERVER['REQUEST_URI']);
+    $match_index = 0;
+    foreach ($rs as $r) {
+      $match_index++;
+      if (preg_match(str_replace('(.*)',$parameters[1][0], $this->ereg), $r)) {
+        break;
+      } 
+    }
+    $rs = implode('/',array_slice($rs, $match_index));
+    $ma = new ModifierApplicator(strip_tags(urldecode($parameters[1][0])), $registered_modifiers, $rs, $this->_db);
+    return $ma->getModifiedSubdomain();
+  }
+
 }
 
 class TranslatePunctuationModifier extends Modifier {
@@ -134,19 +195,19 @@ class OmgWhyModifier extends Modifier {
 }
 
 class CssBackgroundGradientModifier extends Modifier {
-    protected $ereg = "/^bg[0-9a-fA-F]{6},[0-9a-fA-F]{6}$/";
+  protected $ereg = "/^bg[0-9a-fA-F]{6},[0-9a-fA-F]{6}$/";
 
-public function getParameters() {
+  public function getParameters() {
     return explode(',',substr($this->fragment, 2));
-}
+  }
 
-public function getSample() {
+  public function getSample() {
     return "http://sample-message.theintor.net/bg".randcolor().",".randcolor();
-}
+  }
 
-public function getCssAdditions() {
-$params = $this->getParameters();
-return sprintf("
+  public function getCssAdditions() {
+    $params = $this->getParameters();
+    return sprintf("
 body {
 background: -webkit-gradient(
     linear,
@@ -157,7 +218,7 @@ background: -webkit-gradient(
 );
 background: -moz-linear-gradient( top,#%s,#%s );}
 ", $params[0], $params[1], $params[0], $params[1]);
-}
+  }
 }
 
 
@@ -399,7 +460,7 @@ class CustomShadowModifier extends Modifier {
   protected $ereg = "/^sh[0-9a-fA-F]{6}$/";
   protected $opening_tag = '';
   protected $help_text = "Applies a drop shadow with custom colour";
-
+  
 
   public function getParameters() {
     return array(substr($this->fragment, 2));
@@ -410,6 +471,7 @@ class CustomShadowModifier extends Modifier {
     return ".phrase { text-shadow: #".$params[0]." 10px 10px 0px }";
   }
 }
+
 class EmphasisModifier extends Modifier {
   protected $ereg = "/^i$/";
   protected $opening_tag = "<em>";
@@ -681,7 +743,7 @@ class ModifierApplicator {
         $test_modifier = new $modifier($param, $this->raw_subdomain);
 
         if ($test_modifier->isValid() && (($display_only && $test_modifier->modifiesDisplay()) || !$display_only)) {
-
+          $test_modifier->modifyDb($this->_db, $this->raw_subdomain);
           $this->mergeJsIncludes($test_modifier->getJsIncludes());
           $this->header_additions .= $test_modifier->getHeaderAdditions();
           $this->pre_opening_html .= $test_modifier->getPreOpeningTags();
@@ -690,7 +752,7 @@ class ModifierApplicator {
           $this->opening_tags .= $test_modifier->getOpeningTags();
           $this->closing_tags .= $test_modifier->getClosingTags();
           $this->subdomain = $test_modifier->getModifiedText($this->subdomain);
-          $test_modifier->modifyDb($this->_db, $this->raw_subdomain);
+
           array_push($valid_modifiers, $test_modifier);          
 
         }
@@ -747,39 +809,6 @@ class HelpGenerator {
     return $results;
   }
 }
-
-$registered_modifiers = array('UnboldeningModifier',
-                              'EmphasisModifier',
-                              'GraphVizModifier',
-                              'MatrixModifier',
-                              'DunDunModifier',
-                              'FadeInModifier',
-                              'UppercaseModifier',
-                              'NoMarginModifier',
-                              'BGModifier',
-                              'ShowRelationshipsModifier',
-                              'FGModifier',
-                              'SizeModifier',
-                              'MarqueeModifier',
-                              'RespondsToModifier',
-                              'SerifModifier',
-                              'CodifyModifier',
-                              'GlowModifier',
-                              'ShadowModifier',
-                              'RemoveResponseModifier',
-                              'BinaryModifier',
-                              'OmgWhyModifier',
-                              'Rot13Modifier',
-                              'TranslatePunctuationModifier',
-                              'ApproachModifier',
-                              'CustomShadowModifier',
-                              'TypeModifier',
-                              'CssBackgroundGradientModifier',
-                              'LetterGradientModifier',
-                              'GoogleFontModifier',
-                              'TitleCaseModifier',
-                              'RotationModifier',
-                              'OlTimeyModifier');
 
 
 
