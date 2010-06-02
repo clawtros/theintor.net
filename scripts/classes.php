@@ -30,6 +30,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'CssBackgroundGradientModifier',
                               'LetterGradientModifier',
                               'GoogleFontModifier',
+                              'AlignModifier',
                               'TitleCaseModifier',
                               'RotationModifier',
                               'OlTimeyModifier');
@@ -137,6 +138,16 @@ class UnboldeningModifier extends Modifier {
   protected $ereg = "/^-b$/";
   protected $css_additions = ".phrase { font-weight:normal }";
   protected $help_text = "Switches to normal font-weight";
+}
+
+class AlignModifier extends Modifier {
+  protected $ereg = "/^a([lr])$/";
+  protected $help_text = "Switches text alignment";
+  public function getCssAdditions() {
+    $ps = $this->getParameters();
+    return sprintf(".phrase { text-align: %s }",
+                   $ps[1][0] == 'l' ? 'left' : 'right');
+  }
 }
 
 class MessageModifier extends Modifier {
