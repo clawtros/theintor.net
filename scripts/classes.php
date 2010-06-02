@@ -141,7 +141,7 @@ class UnboldeningModifier extends Modifier {
 
 class MessageModifier extends Modifier {
   protected $ereg = "/^q(.*)/";
-  protected $help_text = "";
+  protected $help_text = "Replaces the message";
   protected $_db = NULL;
   protected $modifies_display = true;
 
@@ -153,15 +153,16 @@ class MessageModifier extends Modifier {
     global $registered_modifiers;
 
     $parameters = $this->getParameters();
-
     $rs = explode('/',$_SERVER['REQUEST_URI']);
-    $match_index = 0;
+ 
+    $match_index = 0;   
     foreach ($rs as $r) {
       $match_index++;
-      if (preg_match(str_replace('(.*)',$parameters[1][0], $this->ereg), $r)) {
+      if ((str_replace('(.*)',$parameters[1][0], $this->ereg) == $r)) {
         break;
       } 
     }
+
     $rs = implode('/',array_slice($rs, $match_index));
     $ma = new ModifierApplicator(strip_tags(urldecode($parameters[1][0])), $registered_modifiers, $rs, $this->_db);
     return $ma->getModifiedSubdomain();
