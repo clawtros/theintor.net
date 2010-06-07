@@ -2,6 +2,9 @@
 
 $registered_modifiers = array('UnboldeningModifier',
                               'MessageModifier',
+                              'WaveyModifier',
+                              'CylonModifier',
+                              'ZoomyModifier',
                               'EmphasisModifier',
                               'GraphVizModifier',
                               'MatrixModifier',
@@ -680,6 +683,21 @@ class TypeModifier extends Modifier {
   protected $js_includes = array('jquery', 'type');
 }
 
+
+class WaveyModifier extends Modifier {
+  protected $ereg = "/^sin$/";
+  protected $js_includes = array('jquery', 'entityify', 'sinny');
+}
+
+class CylonModifier extends Modifier {
+  protected $ereg = "/^cy$/";
+  protected $js_includes = array('jquery', 'entityify', 'cylon');
+}
+
+class ZoomyModifier extends Modifier {
+  protected $ereg = "/^zm$/";
+  protected $js_includes = array('jquery', 'entityify', 'zoomy');
+}
 
 class ModifierApplicator {
   private $valid_modifiers = array();
