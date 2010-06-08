@@ -61,7 +61,6 @@ jQuery.fn.extend({
     function idify_entities(entities) {
       var replacement = "";
       for (var i in entities) {
-        if ($(
         replacement += '<span id="entity_'+i+'" class="entity">'+entities[i]+'</span>';
       }
       return replacement;
