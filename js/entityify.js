@@ -61,16 +61,36 @@ jQuery.fn.extend({
     function idify_entities(entities) {
       var replacement = "";
       for (var i in entities) {
+        if ($(
         replacement += '<span id="entity_'+i+'" class="entity">'+entities[i]+'</span>';
       }
       return replacement;
+    }
+
+    function to_typing_array(phrase) {
+      var result = [];
+      var storage = [];
+      for (var i in phrase) {
+        var character = phrase[i];
+        if (!character.match(/[\<\&]/) && storage.length == 0) {
+          result.push(phrase[i]);
+        } else {
+          storage.push(character);
+          if (character.match(/[\>\;]/)) {
+            result.push(storage.join(""));
+            storage = [];
+          }
+        }
+      }
+      
+      return result;
     }
     
     var options = {};
     $.extend(options, opts);
 
     if (this.attr('entitied') != 'true') {
-      var es = string_to_entities(this.text());
+      var es = to_typing_array(this.html());
       this.html(idify_entities(es));
       this.attr('entitied','true');
       this.attr('entities',es.length);

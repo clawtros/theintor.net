@@ -30,7 +30,7 @@ function type_character() {
         if (typing_array[typing_position-1].length > 1) {
             type_character();
         } else {
-            setTimeout(type_character, Math.floor(Math.random()*340)+50);
+            setTimeout(type_character, Math.floor(Math.random()*240)+50);
         }
     } else {
         //$("#cursor").hide();
@@ -53,6 +53,7 @@ function start_typing() {
 
 $(document).ready(function() {
     $("#phrase").html('<div id="type"></div>');    
+
     destination = $("#type");
     start_typing();
 });
