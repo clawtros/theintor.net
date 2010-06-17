@@ -6,6 +6,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'CylonModifier',
                               'ZoomyModifier',
                               'EmphasisModifier',
+                              'YouWouldntModifier',
                               'GraphVizModifier',
                               'MatrixModifier',
                               'DunDunModifier',
@@ -593,6 +594,35 @@ class LetterGradientModifier extends Modifier {
     }
 
     return $result;
+  }
+
+}
+
+class YouWouldntModifier extends Modifier {
+  protected $ereg = "/^yw$/";
+
+  private function randSpan($word) {
+    return sprintf('<span style="font-size:%d%%;">%s</span> ', rand(25,150), $word);
+  }
+
+  public function getModifiedText($text) {
+    $result = "";
+    foreach (explode(" ", $text) as $word) {
+      $result .= $this->randSpan($word);
+    }
+    return $result;
+  }
+
+  public function getCssAdditions() {
+    return "@font-face {
+  font-family: 'Confidential';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Confidential'), url('/media/Confidential.ttf') format('truetype');
+}
+body { font-family: Confidential; background: black; color: white; }
+#phrase { margin-top:5%; font-size: 150px }
+";
   }
 
 }
