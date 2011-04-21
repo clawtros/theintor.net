@@ -573,8 +573,9 @@ class LetterGradientModifier extends Modifier {
     $text = htmlspecialchars_decode($text);
     $entities = string_to_entities($text);
     $textlength = sizeof($entities);
-    
-    
+     
+    $result = "";
+    if ($textlength > 0) {
     list($from, $to) = $this->getParameters();
     list($from_r, $from_g, $from_b) = split_channels($from);
     list($to_r, $to_g, $to_b) = split_channels($to);
@@ -583,7 +584,6 @@ class LetterGradientModifier extends Modifier {
     $dg = ($from_g - $to_g) / $textlength;
     $db = ($from_b - $to_b) / $textlength;
 
-    $result = "";
     $i = 0;
     foreach ($entities as $entity) {
       $i++;
@@ -592,7 +592,7 @@ class LetterGradientModifier extends Modifier {
         sprintf("<span style=\"color:rgb(%d,%d,%d)\">%s</span>", 
                 $from_r - $dr*$i, $from_g - $dg*$i, $from_b - $db*$i, $entity);
     }
-
+}
     return $result;
   }
 
