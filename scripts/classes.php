@@ -37,6 +37,7 @@ $registered_modifiers = array('UnboldeningModifier',
                               'AlignModifier',
                               'TitleCaseModifier',
                               'RotationModifier',
+                              'CastsShadowModifier',
                               'OlTimeyModifier');
 
 function randcolor() {
@@ -722,6 +723,11 @@ class WaveyModifier extends Modifier {
 class CylonModifier extends Modifier {
   protected $ereg = "/^cy$/";
   protected $js_includes = array('jquery', 'entityify', 'cylon');
+}
+
+class CastsShadowModifier extends Modifier {
+  protected $ereg = "/^casts$/";
+  protected $js_includes = array('jquery', 'entityify', 'casts');
 }
 
 class ZoomyModifier extends Modifier {
