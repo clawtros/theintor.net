@@ -251,7 +251,7 @@ class Rot13Modifier extends Modifier {
 class MarqueeModifier extends Modifier {
   protected $ereg = "/^mq$/";
   protected $help_text = "Scrolling scrolling scrolling";
-  protected $opening_tag = "<marquee>";
+  protected $opening_tag = "<marquee padding-top=\"600\" scrolldelay=\"5\" scrollamount=\"15\" height=\"800\" background='yellow'>";
   protected $closing_tag = "</marquee>";
 
 }
